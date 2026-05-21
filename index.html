@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- 반응형 뷰포트 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suhan Sung | AI & Web Developer</title>
+
+  <!-- Google Fonts: 메인 폰트 -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <!-- Font Awesome: 아이콘 라이브러리 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- 외부 CSS 파일 연결 -->
+  <link rel="stylesheet" href="style.css?v=3" />
+</head>
+
+<body>
+
+  <!-- ========== HEADER / NAVIGATION ========== -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <!-- 로고 영역 -->
+      <a href="#home" class="nav__logo">
+        <span class="nav__logo-bracket">&lt;</span>SuhanSung
+        <span class="nav__logo-bracket">/&gt;</span>
+      </a>
+
+      <!-- 네비게이션 메뉴 (5개) -->
+      <ul class="nav__menu" id="navMenu">
+        <li class="nav__item">
+          <a href="#home" class="nav__link active" data-section="home">
+            <i class="fa-solid fa-house"></i> Home
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="#about" class="nav__link" data-section="about">
+            <i class="fa-solid fa-user"></i> About
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="#skills" class="nav__link" data-section="skills">
+            <i class="fa-solid fa-code"></i> Skills
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="#projects" class="nav__link" data-section="projects">
+            <i class="fa-solid fa-diagram-project"></i> Projects
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="#photo" class="nav__link" data-section="photo">
+            <i class="fa-solid fa-images"></i> Photo
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="#contact" class="nav__link" data-section="contact">
+            <i class="fa-solid fa-envelope"></i> Contact
+          </a>
+        </li>
+      </ul>
+
+      <!-- 모바일 햄버거 버튼 & 언어 선택버튼 그룹 -->
+      <div class="nav__actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" id="btnLangKo">KO</button>
+          <span class="lang-divider">|</span>
+          <button class="lang-btn" id="btnLangEn">EN</button>
+        </div>
+        <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main>
+
+    <!-- ===== SECTION 1: HERO ===== -->
+    <section class="hero" id="home">
+      <!-- 배경 파티클 컨테이너 -->
+      <div class="hero__particles" id="particles"></div>
+
+      <div class="hero__content container">
+        <div class="hero__text">
+          <!-- 타이핑 애니메이션 인트로 -->
+          <p class="hero__greeting">
+            <span class="lang-ko">안녕하세요, 저는</span>
+            <span class="lang-en">Hello, I'm</span>
+          </p>
+          <h1 class="hero__title">
+            <span class="hero__name">Suhan Sung</span>
+          </h1>
+          <!-- 타이핑 효과 텍스트 -->
+          <h2 class="hero__subtitle lang-ko">
+            <span class="typing-prefix">저는 </span>
+            <span class="typing-text" id="typingTextKo"></span>
+            <span class="typing-cursor">|</span>
+            <span> 에 관심 많아요</span>
+          </h2>
+          <h2 class="hero__subtitle lang-en">
+            <span class="typing-prefix">I'm Into </span>
+            <span class="typing-text" id="typingTextEn"></span>
+            <span class="typing-cursor">|</span>
+          </h2>
+          <p class="hero__description">
+            <span class="lang-ko">
+              강원대학교 AI융합학과 2학년<br />
+              "Trying to be better"
+            </span>
+            <span class="lang-en">
+              Sophomore, Department of AI Convergence at Kangwon National University<br />
+              "Trying to be better"
+            </span>
+          </p>
+
+          <!-- CTA 버튼 그룹 -->
+          <div class="hero__buttons">
+            <a href="#projects" class="btn btn--primary">
+              <i class="fa-solid fa-rocket"></i>
+              <span class="lang-ko">프로젝트 보기</span>
+              <span class="lang-en">View Projects</span>
+            </a>
+            <a href="#contact" class="btn btn--outline">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span class="lang-ko">연락하기</span>
+              <span class="lang-en">Contact Me</span>
+            </a>
+          </div>
+
+          <!-- 소셜 링크 -->
+          <div class="hero__social">
+            <a href="https://github.com/jamessung644" class="social__link" target="_blank" aria-label="GitHub">
+              <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="https://www.instagram.com/hspgamjt/" class="social__link" target="_blank" aria-label="Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="mailto:jamessung65@naver.com" class="social__link" aria-label="Email">
+              <i class="fa-solid fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 히어로 비주얼: 프로필 카드 -->
+        <div class="hero__visual">
+          <div class="profile-card">
+            <!-- 프로필 아바타 (CSS art) -->
+            <div class="profile-card__avatar">
+              <div class="avatar-ring"></div>
+              <div class="avatar-ring avatar-ring--2"></div>
+              <div class="avatar-inner">
+                <i class="fa-solid fa-user-astronaut"></i>
+              </div>
+            </div>
+            <!-- 플로팅 배지들 -->
+            <div class="floating-badge badge--ai">
+              <i class="fa-solid fa-brain"></i> AI/ML
+            </div>
+            <div class="floating-badge badge--web">
+              <i class="fa-solid fa-globe"></i> Web
+            </div>
+            <div class="floating-badge badge--award">
+              <i class="fa-solid fa-trophy"></i>
+              <span class="lang-ko">대상</span>
+              <span class="lang-en">Grand Prize</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 스크롤 다운 인디케이터 -->
+      <div class="hero__scroll">
+        <a href="#about">
+          <span class="scroll-text">Scroll</span>
+          <div class="scroll-arrow">
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 2: ABOUT ===== -->
+    <section class="about section" id="about">
+      <div class="container">
+        <!-- 섹션 헤더 -->
+        <div class="section__header reveal">
+          <span class="section__tag">Who I Am</span>
+          <h2 class="section__title">About Me</h2>
+          <p class="section__subtitle">
+            <span class="lang-ko">AI와 기술로 더 나은 세상을 만드는 개발자입니다</span>
+            <span class="lang-en">A developer building a better world with AI and technology</span>
+          </p>
+        </div>
+
+        <div class="about__grid">
+          <!-- 왼쪽: 정보 카드 -->
+          <div class="about__info reveal">
+            <div class="info-card">
+              <div class="info-card__header">
+                <i class="fa-solid fa-id-card"></i>
+                <h3>
+                  <span class="lang-ko">기본 정보</span>
+                  <span class="lang-en">Basic Info</span>
+                </h3>
+              </div>
+              <ul class="info-list">
+                <li class="info-list__item">
+                  <span class="info-list__label"><i class="fa-solid fa-user"></i> <span class="lang-ko">이름</span><span
+                      class="lang-en">Name</span></span>
+                  <span class="info-list__value">
+                    <span class="lang-ko">Suhan Sung (성수한)</span>
+                    <span class="lang-en">Suhan Sung</span>
+                  </span>
+                </li>
+                <li class="info-list__item">
+                  <span class="info-list__label"><i class="fa-solid fa-graduation-cap"></i> <span
+                      class="lang-ko">학교</span><span class="lang-en">University</span></span>
+                  <span class="info-list__value">
+                    <span class="lang-ko">강원대학교</span>
+                    <span class="lang-en">Kangwon National Univ.</span>
+                  </span>
+                </li>
+                <li class="info-list__item">
+                  <span class="info-list__label"><i class="fa-solid fa-book"></i> <span class="lang-ko">학과</span><span
+                      class="lang-en">Major</span></span>
+                  <span class="info-list__value">
+                    <span class="lang-ko">AI융합학과 2학년</span>
+                    <span class="lang-en">AI Convergence, 2nd Year</span>
+                  </span>
+                </li>
+                <li class="info-list__item">
+                  <span class="info-list__label"><i class="fa-solid fa-hashtag"></i> <span
+                      class="lang-ko">학번</span><span class="lang-en">Student ID</span></span>
+                  <span class="info-list__value">202310671</span>
+                </li>
+                <li class="info-list__item">
+                  <span class="info-list__label"><i class="fa-solid fa-envelope"></i> <span
+                      class="lang-ko">이메일</span><span class="lang-en">Email</span></span>
+                  <span class="info-list__value">jamessung65@naver.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 오른쪽: 소개 텍스트 + 관심사 -->
+          <div class="about__content reveal">
+            <h3 class="about__name">
+              <span class="lang-ko">성수한</span>
+              <span class="lang-en">Suhan Sung</span>
+            </h3>
+            <p class="about__bio lang-ko">
+              강원대학교 AI융합학과에 재학 중이며, <strong>인공지능</strong>과 <strong>웹 개발</strong>의
+              교차점에서 혁신적인 솔루션을 만들어가고 있습니다.
+            </p>
+            <p class="about__bio lang-ko">
+              드론 시스템과 컴퓨터 비전을 결합한 프로젝트로 캡스톤 디자인 <strong>대상</strong>을 수상하였으며,
+              한국관광공사 해커톤 <strong>1위</strong>를 달성하며 실전 역량을 키워왔습니다.
+              또한, 마이크로소프트 코리아에서 개최한 <strong>'2023 초광역 GPT-AI 활용 창업경진대회'</strong>에서 <strong>챌린지상</strong>을 수상하였습니다.
+            </p>
+            <p class="about__bio lang-en">
+              I am a student majoring in AI Convergence at Kangwon National University, crafting innovative solutions at
+              the intersection of <strong>Artificial Intelligence</strong> and <strong>Web Development</strong>.
+            </p>
+            <p class="about__bio lang-en">
+              I won the <strong>Grand Prize</strong> in Capstone Design with a project combining drone systems and
+              computer vision, and placed <strong>1st</strong> in the Korea Tourism Organization (KTO) Hackathon to
+              develop hands-on expertise. Additionally, I received the <strong>Challenge Award</strong> at the '2023
+              GPT-AI Startup Competition' hosted by Microsoft Korea.
+            </p>
+
+            <!-- 관심 분야 태그 -->
+            <div class="about__interests">
+              <h4>
+                <span class="lang-ko">관심 분야</span>
+                <span class="lang-en">Interests</span>
+              </h4>
+              <div class="interest-tags">
+                <span class="interest-tag">
+                  <i class="fa-solid fa-robot"></i>
+                  <span class="lang-ko">AI/머신러닝</span>
+                  <span class="lang-en">AI / Machine Learning</span>
+                </span>
+                <span class="interest-tag">
+                  <i class="fa-solid fa-globe"></i>
+                  <span class="lang-ko">웹 개발</span>
+                  <span class="lang-en">Web Development</span>
+                </span>
+                <span class="interest-tag">
+                  <i class="fa-solid fa-helicopter"></i>
+                  <span class="lang-ko">로보틱스</span>
+                  <span class="lang-en">Robotics</span>
+                </span>
+                <span class="interest-tag">
+                  <i class="fa-solid fa-leaf"></i>
+                  <span class="lang-ko">환경 지속가능성</span>
+                  <span class="lang-en">Sustainability</span>
+                </span>
+                <span class="interest-tag">
+                  <i class="fa-solid fa-eye"></i>
+                  <span class="lang-ko">컴퓨터 비전</span>
+                  <span class="lang-en">Computer Vision</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- 수상 통계 -->
+            <div class="about__stats">
+              <div class="stat-item">
+                <span class="stat-number" data-target="7">0</span>
+                <span class="stat-label">
+                  <span class="lang-ko">수상</span>
+                  <span class="lang-en">Awards</span>
+                </span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number" data-target="5">0</span>
+                <span class="stat-label">
+                  <span class="lang-ko">기술 스택</span>
+                  <span class="lang-en">Skills</span>
+                </span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number" data-target="1">0</span>
+                <span class="stat-label">
+                  <span class="lang-ko">주요 프로젝트</span>
+                  <span class="lang-en">Projects</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 3: SKILLS ===== -->
+    <section class="skills section" id="skills">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__tag">What I Know</span>
+          <h2 class="section__title">Skills</h2>
+          <p class="section__subtitle">
+            <span class="lang-ko">다양한 기술 스택으로 문제를 해결합니다</span>
+            <span class="lang-en">Solving complex problems with a diverse set of technical skills</span>
+          </p>
+        </div>
+
+        <!-- 스킬 카테고리 그리드 -->
+        <div class="skills__grid">
+
+          <!-- AI/ML 카테고리 -->
+          <div class="skill-category skill-category--ai reveal">
+            <div class="skill-category__header">
+              <div class="skill-category__icon skill-category__icon--ai">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <h3>AI / Robotics</h3>
+            </div>
+            <div class="skill-tags">
+              <span class="skill-tag"><i class="fa-solid fa-bullseye"></i> YOLOv8</span>
+              <span class="skill-tag"><i class="fa-solid fa-fire-flame-curved"></i> PyTorch</span>
+              <span class="skill-tag"><i class="fa-solid fa-robot"></i> LeRobot</span>
+              <span class="skill-tag"><i class="fa-solid fa-hand-sparkles"></i> MediaPipe</span>
+              <span class="skill-tag"><i class="fa-solid fa-eye"></i> OpenCV</span>
+              <span class="skill-tag"><i class="fa-solid fa-microchip"></i> Arduino</span>
+            </div>
+          </div>
+
+          <!-- 웹 개발 카테고리 -->
+          <div class="skill-category skill-category--web reveal">
+            <div class="skill-category__header">
+              <div class="skill-category__icon skill-category__icon--web">
+                <i class="fa-solid fa-code"></i>
+              </div>
+              <h3>Web Development</h3>
+            </div>
+            <div class="skill-tags">
+              <span class="skill-tag"><i class="fa-brands fa-react"></i> React</span>
+              <span class="skill-tag"><i class="fa-solid fa-cube"></i> Next.js</span>
+              <span class="skill-tag"><i class="fa-solid fa-code"></i> HTML / CSS / JS</span>
+            </div>
+          </div>
+
+          <!-- 백엔드 카테고리 -->
+          <div class="skill-category skill-category--backend reveal">
+            <div class="skill-category__header">
+              <div class="skill-category__icon skill-category__icon--backend">
+                <i class="fa-solid fa-server"></i>
+              </div>
+              <h3>Backend</h3>
+            </div>
+            <div class="skill-tags">
+              <span class="skill-tag"><i class="fa-solid fa-bolt"></i> FastAPI</span>
+              <span class="skill-tag"><i class="fa-solid fa-plug"></i> WebSocket</span>
+              <span class="skill-tag"><i class="fa-brands fa-python"></i> Python</span>
+            </div>
+          </div>
+
+          <!-- 기타 카테고리 -->
+          <div class="skill-category skill-category--other reveal">
+            <div class="skill-category__header">
+              <div class="skill-category__icon skill-category__icon--other">
+                <i class="fa-solid fa-wrench"></i>
+              </div>
+              <h3>Other Tools</h3>
+            </div>
+            <!-- 태그 형태 기술 표시 -->
+            <div class="skill-tags">
+              <span class="skill-tag">
+                <i class="fa-solid fa-helicopter"></i>
+                <span class="lang-ko">드론 제어</span>
+                <span class="lang-en">Drone Control</span>
+              </span>
+              <span class="skill-tag">
+                <i class="fa-solid fa-spider"></i>
+                <span class="lang-ko">데이터 크롤링</span>
+                <span class="lang-en">Web Scraping</span>
+              </span>
+              <span class="skill-tag">
+                <i class="fa-solid fa-map"></i>
+                <span class="lang-ko">지도 API</span>
+                <span class="lang-en">Map APIs</span>
+              </span>
+              <span class="skill-tag"><i class="fa-brands fa-git-alt"></i> Git</span>
+              <span class="skill-tag"><i class="fa-brands fa-docker"></i> Docker</span>
+              <span class="skill-tag"><i class="fa-solid fa-camera"></i> Computer Vision</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 4: PROJECTS ===== -->
+    <section class="projects section" id="projects">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__tag">What I Built</span>
+          <h2 class="section__title">Projects</h2>
+          <p class="section__subtitle">
+            <span class="lang-ko">실전 프로젝트로 쌓아온 경험들</span>
+            <span class="lang-en">A selection of hands-on projects showing my experience</span>
+          </p>
+        </div>
+
+        <div class="projects__grid">
+
+          <!-- 프로젝트 카드 1: 드론 + 관광 통합 프로젝트 (메인) -->
+          <article class="project-card project-card--featured reveal">
+            <!-- 왼쪽: YouTube 데모 영상 -->
+            <div class="project-card__image">
+              <div class="project-video-wrap">
+                <iframe src="https://www.youtube.com/embed/WXHzLcVCvhw" title="실시간 군중밀도 모니터링 드론 시스템 데모" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <!-- 수상 배지 -->
+              <div class="project-card__badge">
+                <i class="fa-solid fa-trophy"></i>
+                <span class="lang-ko">대상 · 1위</span>
+                <span class="lang-en">Grand Prize · 1st Place</span>
+              </div>
+            </div>
+
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--ai">YOLOv8</span>
+                <span class="project-tag project-tag--ai">PyTorch</span>
+                <span class="project-tag project-tag--ai">Homography</span>
+                <span class="project-tag project-tag--web">React</span>
+                <span class="project-tag project-tag--web">FastAPI</span>
+                <span class="project-tag project-tag--web">WebSocket</span>
+              </div>
+
+              <h3 class="project-card__title">
+                <span class="lang-ko">실시간 군중밀도 모니터링 드론 시스템<br><span class="project-card__title-sub">& AI 기반 관광 추천 웹
+                    서비스</span></span>
+                <span class="lang-en">Real-time Crowd Density Monitoring Drone System<br><span
+                    class="project-card__title-sub">& AI-based Tourism Recommendation Web Service</span></span>
+              </h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">Homography Estimation으로 드론 영상의 군중 밀도를 실시간 분석하고, YOLOv8 + Transfer
+                  Learning(VisDrone Dataset)으로 학습한 모델을 활용합니다. 분석 결과를 AI 추천 알고리즘·지도 API와 연동해 혼잡도 기반 맞춤형 관광지 추천 서비스로 확장한
+                  통합 프로젝트입니다.</span>
+                <span class="lang-en">Uses Homography Estimation to analyze crowd density from drone footage in
+                  real-time, utilizing a model trained with YOLOv8 + Transfer Learning (VisDrone Dataset). An integrated
+                  project that links analysis results with AI recommendation algorithms and map APIs to recommend
+                  personalized tour spots based on crowd levels.</span>
+              </p>
+
+              <!-- 수상 정보 -->
+              <div class="project-awards">
+                <div class="award-item">
+                  <i class="fa-solid fa-medal"></i>
+                  <div>
+                    <strong class="lang-ko">KNU 전공 및 졸업작품 경진대회</strong>
+                    <strong class="lang-en">KNU Major & Graduation Design Competition</strong>
+                    <span class="lang-ko">최우수상 수상</span>
+                    <span class="lang-en">First Prize Award</span>
+                  </div>
+                </div>
+                <div class="award-item">
+                  <i class="fa-solid fa-trophy"></i>
+                  <div>
+                    <strong class="lang-ko">한국관광공사(KTO) 2024 스마트한 지역관광 문제해결 프로젝트 해커톤</strong>
+                    <strong class="lang-en">Korea Tourism Organization (KTO) 2024 Hackathon</strong>
+                    <span class="lang-ko">1위 수상</span>
+                    <span class="lang-en">1st Place Award</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644" target="_blank" class="project-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://www.newscj.com/news/articleView.html?idxno=3167159" target="_blank"
+                  class="project-link">
+                  <i class="fa-solid fa-newspaper"></i>
+                  <span class="lang-ko">뉴스 기사</span>
+                  <span class="lang-en">News Article</span>
+                </a>
+                <a href="https://youtu.be/WXHzLcVCvhw" target="_blank" class="project-link project-link--demo">
+                  <i class="fa-brands fa-youtube"></i>
+                  <span class="lang-ko">데모 영상</span>
+                  <span class="lang-en">Demo Video</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 프로젝트 카드 2: Pill-Good -->
+          <article class="project-card reveal">
+            <div class="project-card__image">
+              <div class="project-img project-img--iot">
+                <div class="iot-visual">
+                  <i class="fa-solid fa-pills fa-3x"></i>
+                </div>
+              </div>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--other">Swift</span>
+                <span class="project-tag project-tag--other">Arduino</span>
+                <span class="project-tag project-tag--other">IoT</span>
+              </div>
+              <h3 class="project-card__title">
+                <span class="lang-ko">Pill Good (스마트 알약 디스펜서)</span>
+                <span class="lang-en">Pill Good (Smart Pill Dispenser)</span>
+              </h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">개인의 생활 패턴에 맞춰 자동으로 알약을 배출해주는 스마트 디스펜서입니다. iOS 앱 연동을 통해 복약 기록을 저장하고 다중 기기 제어를 지원하여
+                  체계적인 건강 관리를 돕습니다.</span>
+                <span class="lang-en">A smart pill dispenser that automatically dispenses pills based on daily patterns.
+                  Syncs with an iOS app to log medication history and supports multi-device control for organized health
+                  management.</span>
+              </p>
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644/Pill-Good" target="_blank" class="project-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 프로젝트 카드 3: Synthetic Hand "Signiture MK1" -->
+          <article class="project-card reveal">
+            <div class="project-card__image">
+              <div class="project-img project-img--drone">
+                <div class="drone-visual">
+                  <i class="fa-solid fa-hand-sparkles fa-3x"></i>
+                </div>
+              </div>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--ai">MediaPipe</span>
+                <span class="project-tag project-tag--ai">OpenCV</span>
+                <span class="project-tag project-tag--other">Arduino</span>
+              </div>
+              <h3 class="project-card__title">Synthetic Hand "Signiture MK1"</h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">컴퓨터 비전을 사용하여 사용자의 손 모양을 감지하고, 이를 아두이노로 전송해 로봇팔을 조작하는 시스템입니다. 실시간 웹캠 영상 분석을 통해
+                  제어합니다.</span>
+                <span class="lang-en">A system that detects the user's hand gestures using computer vision and sends
+                  them to Arduino to manipulate a robotic arm. Controlled via real-time webcam analysis.</span>
+              </p>
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644/Signiture-MK1" target="_blank" class="project-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://youtu.be/KIa77oBFC2w" target="_blank" class="project-link project-link--demo">
+                  <i class="fa-brands fa-youtube"></i>
+                  <span class="lang-ko">데모 영상</span>
+                  <span class="lang-en">Demo Video</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 프로젝트 카드 4: Codebuddy -->
+          <article class="project-card reveal">
+            <div class="project-card__image">
+              <div class="project-img project-img--web">
+                <div class="web-visual">
+                  <img src="Img/codebuddy_icon.png" alt="Code Buddy Icon"
+                    style="width: 80px; height: 80px; object-fit: contain; border-radius: 20%; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));" />
+                </div>
+              </div>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--web">Electron</span>
+                <span class="project-tag project-tag--web">JavaScript</span>
+                <span class="project-tag project-tag--ai">Claude / GPT / Ollama</span>
+              </div>
+              <h3 class="project-card__title">Code Buddy</h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">macOS 데스크톱 위에서 살아 움직이는 AI 픽셀아트 코딩 동료 앱입니다. 개발자, 디자이너 등 다양한 역할을 가진 펫들과 채팅하며 코딩 작업을
+                  함께할 수 있습니다.</span>
+                <span class="lang-en">An AI desktop companion app running on macOS with live pixel art characters. Users
+                  can chat with companion pets configured with various roles like developer or designer to assist with
+                  their coding.</span>
+              </p>
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644/codebuddy" target="_blank" class="project-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 프로젝트 카드 5: PilloSuffer -->
+          <article class="project-card reveal">
+            <div class="project-card__image">
+              <div class="project-img project-img--health">
+                <div class="health-visual">
+                  <i class="fa-solid fa-prescription-bottle-medical fa-3x"></i>
+                </div>
+              </div>
+              <!-- Coming Soon Badge -->
+              <div class="project-card__badge" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(99,102,241,.4); color: #fff;">
+                <i class="fa-solid fa-clock"></i>
+                <span>Coming Soon</span>
+              </div>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--ai">OCR</span>
+                <span class="project-tag project-tag--ai">LLM (RAG)</span>
+                <span class="project-tag project-tag--web">Supabase</span>
+                <span class="project-tag project-tag--other">DUR API</span>
+              </div>
+              <h3 class="project-card__title">
+                <span class="lang-ko">PilloSuffer</span>
+                <span class="lang-en">PilloSuffer</span>
+                <span class="project-card__title-sub" style="color: var(--accent-red);">
+                  <span class="lang-ko">약-음식·영양제 상호작용 분석 서비스</span>
+                  <span class="lang-en">Drug-Food Interaction Analyzer</span>
+                </span>
+              </h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">약봉투나 처방전을 촬영하여 약 성분을 자동 추출하고, 사용자가 섭취하는 가공식품 및 영양제 성분과의 상호작용 위험도를 AI로 분석하여 직관적인 안전 가이드를 제공합니다.</span>
+                <span class="lang-en">Fuses high-precision OCR and LLM (RAG) to extract ingredients from prescription envelopes and analyze real-time interaction safety/risk levels with a user's food or supplement intake.</span>
+              </p>
+              <div class="project-card__links">
+                <span class="project-link" style="opacity: 0.6; cursor: not-allowed;">
+                  <i class="fa-solid fa-code"></i> In Progress
+                </span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 프로젝트 카드 6: Eyes-Road -->
+          <article class="project-card reveal">
+            <div class="project-card__image">
+              <div class="project-img project-img--safety">
+                <div class="safety-visual">
+                  <i class="fa-solid fa-eye fa-3x"></i>
+                </div>
+              </div>
+              <!-- Coming Soon Badge -->
+              <div class="project-card__badge" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(99,102,241,.4); color: #fff;">
+                <i class="fa-solid fa-clock"></i>
+                <span>Coming Soon</span>
+              </div>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag project-tag--ai">YOLOv8</span>
+                <span class="project-tag project-tag--ai">PyTorch</span>
+                <span class="project-tag project-tag--web">FastAPI</span>
+                <span class="project-tag project-tag--other">GIS (PAI)</span>
+              </div>
+              <h3 class="project-card__title">
+                <span class="lang-ko">Eyes-Road (눈길)</span>
+                <span class="lang-en">Eyes-Road</span>
+                <span class="project-card__title-sub" style="color: var(--color-accent2);">
+                  <span class="lang-ko">점자블록 정밀 모니터링 & PAI 플랫폼</span>
+                  <span class="lang-en">Tactile Paving Monitoring & PAI Platform</span>
+                </span>
+              </h3>
+              <p class="project-card__desc">
+                <span class="lang-ko">서울시 공공데이터 7종과 CCTV/순찰차 카메라 기반의 YOLOv8 AI Vision 탐지 엔진을 융합하여, 시각장애인을 위한 점자블록 마모 상태 실시간 모니터링 및 보행환경지수(PAI)를 산출하는 스마트 안전 플랫폼입니다.</span>
+                <span class="lang-en">A smart city safety platform that monitors tactile paving degradation in real-time using YOLOv8 via public CCTV/cameras and integrates 7 types of urban data to evaluate the Pedestrian Accessibility Index (PAI).</span>
+              </p>
+              <div class="project-card__links">
+                <span class="project-link" style="opacity: 0.6; cursor: not-allowed;">
+                  <i class="fa-solid fa-code"></i> In Progress
+                </span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 5: PHOTO & VIDEO ===== -->
+    <section class="photo section" id="photo">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__tag">Gallery</span>
+          <h2 class="section__title">Photo & Video</h2>
+          <p class="section__subtitle">
+            <span class="lang-ko">프로젝트와 일상의 순간들</span>
+            <span class="lang-en">Moments of projects and daily life</span>
+          </p>
+        </div>
+
+        <!-- 사진 그리드 -->
+        <div class="gallery-grid">
+
+          <!-- 이미지 1 (세로) -->
+          <div class="gallery-item gallery-item--portrait reveal" data-src="Img/1.jpg">
+            <img src="Img/1.jpg" alt="사진 1" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 2 (세로) -->
+          <div class="gallery-item gallery-item--portrait reveal" data-src="Img/2.jpg">
+            <img src="Img/2.jpg" alt="사진 2" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 3 (세로) -->
+          <div class="gallery-item gallery-item--portrait reveal" data-src="Img/3.jpg">
+            <img src="Img/3.jpg" alt="사진 3" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 4 (세로) -->
+          <div class="gallery-item gallery-item--portrait reveal" data-src="Img/4.jpg">
+            <img src="Img/4.jpg" alt="사진 4" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 5 (세로) -->
+          <div class="gallery-item gallery-item--portrait reveal" data-src="Img/5.jpg">
+            <img src="Img/5.jpg" alt="사진 5" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 6 -->
+          <div class="gallery-item reveal" data-src="Img/6.png">
+            <img src="Img/6.png" alt="사진 6" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 7 -->
+          <div class="gallery-item reveal" data-src="Img/7.jpeg">
+            <img src="Img/7.jpeg" alt="사진 7" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 8 -->
+          <div class="gallery-item reveal" data-src="Img/8.jpeg">
+            <img src="Img/8.jpeg" alt="사진 8" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 9 -->
+          <div class="gallery-item reveal" data-src="Img/9.jpeg">
+            <img src="Img/9.jpeg" alt="사진 9" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 10 -->
+          <div class="gallery-item reveal" data-src="Img/10.jpeg">
+            <img src="Img/10.jpeg" alt="사진 10" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 11 -->
+          <div class="gallery-item reveal" data-src="Img/11.jpg">
+            <img src="Img/11.jpg" alt="사진 11" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 12 -->
+          <div class="gallery-item reveal" data-src="Img/12.jpeg">
+            <img src="Img/12.jpeg" alt="사진 12" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 13 -->
+          <div class="gallery-item reveal" data-src="Img/13.jpeg">
+            <img src="Img/13.jpeg" alt="사진 13" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 14 -->
+          <div class="gallery-item reveal" data-src="Img/14.jpeg">
+            <img src="Img/14.jpeg" alt="사진 14" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+          <!-- 이미지 15 -->
+          <div class="gallery-item reveal" data-src="Img/15.jpg">
+            <img src="Img/15.jpg" alt="사진 15" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 비디오 쇼케이스 (Apple 탭 전환형) -->
+        <div class="video-showcase reveal">
+          <!-- 탭 전환 컨트롤러 -->
+          <div class="video-showcase__tabs">
+            <button class="showcase-tab active" data-target="desktop">
+              <i class="fa-solid fa-hand-sparkles"></i>
+              <span>Signiture MK1</span>
+            </button>
+            <button class="showcase-tab" data-target="mobile">
+              <i class="fa-solid fa-robot"></i>
+              <span>LeRobot</span>
+            </button>
+          </div>
+
+          <!-- 비디오 콘텐츠 영역 -->
+          <div class="video-showcase__content">
+            <!-- 데스크톱 비디오 카드 -->
+            <div class="showcase-view showcase-view--desktop active">
+              <div class="video-card__header">
+                <span class="video-card__tag">Physical Computing / AI</span>
+                <h4 class="video-card__title">
+                  <span class="lang-ko">Opencv를 이용한 가위바위보 게임</span>
+                  <span class="lang-en">Rock Paper Scissors Game using Opencv</span>
+                </h4>
+                <a href="https://github.com/jamessung644/Signiture-MK1" target="_blank" class="showcase-github-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+              </div>
+
+              <div class="device-frame device-frame--desktop apple-video-container">
+                <!-- 반사 효과 레이어 -->
+                <div class="device-frame__screen-reflection"></div>
+
+                <!-- 비디오 요소 (컨트롤 숨김, 음소거, 자동재생 대응) -->
+                <video preload="metadata" playsinline muted loop>
+                  <source src="video/_talkv_wuIdft4eH6_suA1RjKzsWFwXQ9E3Gq2V0_talkv_high.mp4" type="video/mp4" />
+                  <span class="lang-ko">브라우저가 비디오 재생을 지원하지 않습니다.</span>
+                  <span class="lang-en">Your browser does not support the video tag.</span>
+                </video>
+
+                <!-- 커스텀 유리모프 컨트롤 오버레이 -->
+                <div class="custom-video-controls">
+                  <div class="custom-video-controls__center">
+                    <button class="play-btn" aria-label="재생/일시정지" title="Play/Pause">
+                      <i class="fa-solid fa-play"></i>
+                    </button>
+                  </div>
+                  <div class="custom-video-controls__bottom">
+                    <button class="mute-btn" aria-label="음소거 토글" title="Mute/Unmute">
+                      <i class="fa-solid fa-volume-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 하단 얇은 진행도 바 -->
+                <div class="video-progress-bar"></div>
+              </div>
+            </div>
+
+            <!-- 모바일 비디오 카드 -->
+            <div class="showcase-view showcase-view--mobile">
+              <div class="video-card__header">
+                <span class="video-card__tag">AI / Robotics</span>
+                <h4 class="video-card__title">
+                  <span class="lang-ko">LeRobot 데모</span>
+                  <span class="lang-en">LeRobot Demo</span>
+                </h4>
+                <a href="https://github.com/jamessung644" target="_blank" class="showcase-github-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
+              </div>
+
+              <div class="device-frame device-frame--mobile apple-video-container">
+                <!-- 반사 효과 레이어 -->
+                <div class="device-frame__screen-reflection"></div>
+
+                <video preload="metadata" playsinline muted loop>
+                  <source src="video/IMG_1348.MOV" type="video/mp4" />
+                  <source src="video/IMG_1348.MOV" type="video/quicktime" />
+                  <span class="lang-ko">브라우저가 비디오 재생을 지원하지 않습니다.</span>
+                  <span class="lang-en">Your browser does not support the video tag.</span>
+                </video>
+
+                <!-- 커스텀 유리모프 컨트롤 오버레이 -->
+                <div class="custom-video-controls">
+                  <div class="custom-video-controls__center">
+                    <button class="play-btn" aria-label="재생/일시정지" title="Play/Pause">
+                      <i class="fa-solid fa-play"></i>
+                    </button>
+                  </div>
+                  <div class="custom-video-controls__bottom">
+                    <button class="mute-btn" aria-label="음소거 토글" title="Mute/Unmute">
+                      <i class="fa-solid fa-volume-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 하단 얇은 진행도 바 -->
+                <div class="video-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- 라이트박스 모달 (전체 화면 이미지 확대) -->
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <button class="lightbox__close" id="lightboxClose" aria-label="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="lightbox__backdrop" id="lightboxBackdrop"></div>
+      <div class="lightbox__content">
+        <img src="" alt="확대 이미지" id="lightboxImg" />
+      </div>
+    </div>
+
+    <!-- ===== SECTION 6: CONTACT ===== -->
+    <section class="contact section" id="contact">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__tag">Get In Touch</span>
+          <h2 class="section__title">Contact</h2>
+          <p class="section__subtitle">
+            <span class="lang-ko">함께 멋진 것을 만들어 봐요</span>
+            <span class="lang-en">Let's make something great together</span>
+          </p>
+        </div>
+
+        <div class="contact__grid">
+          <!-- 연락처 정보 -->
+          <div class="contact__info reveal">
+            <h3>
+              <span class="lang-ko">연락하기</span>
+              <span class="lang-en">Contact Me</span>
+            </h3>
+            <p class="contact__desc">
+              <span class="lang-ko">새로운 프로젝트나 협업, 또는 단순한 인사라도 환영합니다. 언제든지 연락해 주세요!</span>
+              <span class="lang-en">I welcome any inquiries regarding new projects, collaborations, or even just a warm
+                hello. Feel free to contact me anytime!</span>
+            </p>
+
+            <div class="contact-items">
+              <div class="contact-item">
+                <div class="contact-item__icon">
+                  <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div class="contact-item__text">
+                  <span class="contact-item__label">Email</span>
+                  <a href="mailto:jamessung65@naver.com" class="contact-item__value">
+                    jamessung65@naver.com
+                  </a>
+                </div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-item__icon">
+                  <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="contact-item__text">
+                  <span class="contact-item__label">School</span>
+                  <span class="contact-item__value">
+                    <span class="lang-ko">강원대학교 AI융합학과</span>
+                    <span class="lang-en">AI Convergence, KNU</span>
+                  </span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-item__icon">
+                  <i class="fa-brands fa-github"></i>
+                </div>
+                <div class="contact-item__text">
+                  <span class="contact-item__label">GitHub</span>
+                  <a href="https://github.com/jamessung644" target="_blank"
+                    class="contact-item__value">github.com/jamessung644</a>
+                </div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-item__icon">
+                  <i class="fa-brands fa-instagram"></i>
+                </div>
+                <div class="contact-item__text">
+                  <span class="contact-item__label">Instagram</span>
+                  <a href="https://www.instagram.com/hspgamjt/" target="_blank"
+                    class="contact-item__value">@hspgamjt</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 연락 폼 -->
+          <div class="contact__form reveal">
+            <form class="form" id="contactForm">
+              <div class="form__group">
+                <label for="name" class="form__label">
+                  <span class="lang-ko">이름</span>
+                  <span class="lang-en">Name</span>
+                </label>
+                <input type="text" id="name" name="name" class="form__input" placeholder="홍길동" required />
+              </div>
+              <div class="form__group form__group--textarea">
+                <label for="message" class="form__label">
+                  <span class="lang-ko">메시지</span>
+                  <span class="lang-en">Message</span>
+                </label>
+                <textarea id="message" name="message" class="form__textarea" placeholder="안녕하세요! 협업 제안이 있습니다..."
+                  rows="5" required></textarea>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full" id="contactSubmitBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span class="lang-ko">메시지 보내기</span>
+                <span class="lang-en">Send Message</span>
+              </button>
+              <!-- 전송 성공 메시지 -->
+              <p class="form__success" id="formSuccess" style="display:none;">
+                <i class="fa-solid fa-circle-check"></i>
+                <span class="lang-ko">메시지가 전송되었습니다!</span>
+                <span class="lang-en">Message sent successfully!</span>
+              </p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__content">
+        <div class="footer__brand">
+          <span class="nav__logo">
+            <span class="nav__logo-bracket">&lt;</span>SuhanSung
+            <span class="nav__logo-bracket">/&gt;</span>
+          </span>
+          <p>
+            <span class="lang-ko">AI & Web Developer · 강원대학교 AI융합학과</span>
+            <span class="lang-en">AI & Web Developer · AI Convergence, KNU</span>
+          </p>
+        </div>
+
+        <!-- 푸터 네비게이션 -->
+        <nav class="footer__nav">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+          <a href="#photo">Photo</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <!-- 소셜 링크 -->
+        <div class="footer__social">
+          <a href="https://github.com/jamessung644" target="_blank" aria-label="GitHub"><i
+              class="fa-brands fa-github"></i></a>
+          <a href="https://www.instagram.com/hspgamjt/" target="_blank" aria-label="Instagram"><i
+              class="fa-brands fa-instagram"></i></a>
+          <a href="mailto:jamessung65@naver.com" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>
+          <span class="lang-ko">&copy; 2026 Suhan Sung· 강원대학교 AI융합학과</span>
+          <span class="lang-en">&copy; 2026 Suhan Sung· Dept. of AI Convergence, KNU</span>
+        </p>
+        <p>Made with <i class="fa-solid fa-heart" style="color:var(--accent-red)"></i> &amp; AI</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 맨 위로 버튼 -->
+  <button class="back-to-top" id="backToTop" aria-label="맨 위로">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <!-- 외부 JavaScript 파일 연결 -->
+  <script src="script.js"></script>
+</body>
+
+</html>
