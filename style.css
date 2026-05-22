@@ -73,6 +73,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--nav-height);
+  overflow-x: hidden;
 }
 
 body {
@@ -1181,7 +1182,7 @@ body.lang-en-active .lang-ko {
 .award-item span   { color: var(--color-text-sub); font-size: .75rem; }
 
 /* 프로젝트 링크 */
-.project-card__links { display: flex; gap: .5rem; margin-top: auto; }
+.project-card__links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; }
 .project-link {
   display: inline-flex;
   align-items: center;
@@ -1470,6 +1471,8 @@ body.lang-en-active .lang-ko {
 
 /* Desktop Bezel Mockup */
 .device-frame--desktop {
+  width: 100%;
+  max-width: 100%;
   border: 12px solid #16161a;
   border-bottom-width: 12px;
   border-radius: 20px;
