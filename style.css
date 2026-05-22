@@ -240,8 +240,9 @@ body.lang-en-active .lang-ko {
   transition: all var(--t);
 }
 
-/* 스크롤 후 유리 효과 */
-.header.scrolled {
+/* 스크롤 후 및 모바일 메뉴 오픈 시 유리 효과 */
+.header.scrolled,
+.header.open {
   background: rgba(6,7,14,.85);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -1959,6 +1960,12 @@ a.contact-item__value:hover { color: var(--color-primary-light); }
 @media (max-width: 768px) {
   .nav__toggle { display: flex; }
 
+  .nav__logo,
+  .nav__actions {
+    position: relative;
+    z-index: 10;
+  }
+
   .nav__menu {
     position: fixed;
     top: var(--nav-height);
@@ -1971,10 +1978,16 @@ a.contact-item__value:hover { color: var(--color-primary-light); }
     padding: .75rem 0;
     border-bottom: 1px solid var(--color-border);
     transform: translateY(-110%);
-    transition: transform var(--t);
-    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: transform var(--t), opacity var(--t), visibility var(--t);
+    z-index: -1;
   }
-  .nav__menu.open { transform: translateY(0); }
+  .nav__menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
   .nav__link { padding: .9rem 1.75rem; border-radius: 0; }
 
   .projects__grid { grid-template-columns: 1fr; }

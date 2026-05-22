@@ -38,6 +38,7 @@ navToggle.addEventListener('click', () => {
   // 햄버거 버튼과 메뉴에 open 클래스 토글
   navToggle.classList.toggle('open');
   navMenu.classList.toggle('open');
+  header.classList.toggle('open');
 });
 
 // 메뉴 링크 클릭 시 모바일 메뉴 닫기
@@ -45,6 +46,7 @@ navLinks.forEach(link => {
   link.addEventListener('click', () => {
     navToggle.classList.remove('open');
     navMenu.classList.remove('open');
+    header.classList.remove('open');
   });
 });
 
