@@ -5,7 +5,18 @@
   <meta charset="UTF-8" />
   <!-- 반응형 뷰포트 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suhan Sung | AI & Web Developer</title>
+  <title>Personal Page</title>
+
+  <!-- 파비콘 (사이트 대표 이미지) -->
+  <link rel="icon" type="image/svg+xml" href="Img/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="Img/favicon-32.png" />
+  <link rel="apple-touch-icon" href="Img/apple-touch-icon.png" />
+
+  <!-- 링크 공유 미리보기 (Open Graph) -->
+  <meta property="og:title" content="Personal Page" />
+  <meta property="og:description" content="Suhan Sung — AI & Web Developer Portfolio" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://jamessung644.github.io/mypage/Img/og-image.png" />
 
   <!-- Google Fonts: 메인 폰트 -->
   <link
@@ -110,11 +121,11 @@
           </h2>
           <p class="hero__description">
             <span class="lang-ko">
-              강원대학교 AI융합학과 2학년<br />
+              강원대학교 AI융합학과 학사과정<br />
               "Trying to be better"
             </span>
             <span class="lang-en">
-              Sophomore, Department of AI Convergence at Kangwon National University<br />
+              Bachelor's Student, Department of AI Convergence at Kangwon National University<br />
               "Trying to be better"
             </span>
           </p>
@@ -230,14 +241,9 @@
                   <span class="info-list__label"><i class="fa-solid fa-book"></i> <span class="lang-ko">학과</span><span
                       class="lang-en">Major</span></span>
                   <span class="info-list__value">
-                    <span class="lang-ko">AI융합학과 2학년</span>
-                    <span class="lang-en">AI Convergence, 2nd Year</span>
+                    <span class="lang-ko">AI융합학과 학사과정</span>
+                    <span class="lang-en">AI Convergence, Bachelor's</span>
                   </span>
-                </li>
-                <li class="info-list__item">
-                  <span class="info-list__label"><i class="fa-solid fa-hashtag"></i> <span
-                      class="lang-ko">학번</span><span class="lang-en">Student ID</span></span>
-                  <span class="info-list__value">202310671</span>
                 </li>
                 <li class="info-list__item">
                   <span class="info-list__label"><i class="fa-solid fa-envelope"></i> <span
@@ -264,9 +270,9 @@
               또한 마이크로소프트 코리아에서 개최한 <strong>'2023 초광역 GPT-AI 활용 창업경진대회'</strong> 에서 <strong>챌린지상</strong> 을 수상하였습니다.
             </p>
             <p class="about__bio lang-ko">
-              현재는 시각장애인의 독립 보행을 위협하는 점자블록 노후·파손 문제를 해결하기 위해 <strong>YOLOv8s 기반 파손 자동 탐지 플랫폼</strong> 을 구축하고 있습니다.
-              또한 약봉투 사진 한 장에서 <strong>OCR과 RAG</strong> 를 결합해 약·음식·영양제 상호작용을 분석하는 AI 서비스를 개발 중이며,
-              다제복용률이 OECD 최고 수준인 강원도 고령 인구의 복약 안전 지원을 목표로 하고 있습니다.
+              시각장애인의 독립 보행을 위협하는 점자블록 노후·파손 문제를 해결하기 위해 <strong>YOLOv8s 기반 파손 자동 탐지 플랫폼</strong> 을 개발 완료하였습니다.
+              또한 약봉투 사진 한 장에서 <strong>OCR과 RAG</strong> 를 결합해 약·음식·영양제 상호작용을 분석하는 AI 서비스를 개발하여,
+              다제복용률이 OECD 최고 수준인 강원도 고령 인구의 복약 안전을 지원하고자 합니다.
             </p>
 
             <!-- English -->
@@ -281,9 +287,9 @@
               '2023 GPT-AI Startup Competition' hosted by Microsoft Korea.
             </p>
             <p class="about__bio lang-en">
-              Currently, I am building a <strong>YOLOv8s-based damage detection platform</strong> to tackle the
+              I built a <strong>YOLOv8s-based damage detection platform</strong> to tackle the
               deterioration of tactile paving blocks that threatens the independent mobility of visually impaired
-              pedestrians. I am also developing an AI service that combines <strong>OCR and RAG</strong> to analyze
+              pedestrians. I also developed an AI service that combines <strong>OCR and RAG</strong> to analyze
               drug–food–supplement interactions from a single photo of a medication envelope, aimed at supporting
               medication safety for the elderly in Gangwon Province — where polypharmacy rates rank highest among
               OECD countries.
@@ -654,12 +660,6 @@
                   <i class="fa-solid fa-prescription-bottle-medical fa-3x"></i>
                 </div>
               </div>
-              <!-- Coming Soon Badge -->
-              <div class="project-card__badge"
-                style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(99,102,241,.4); color: #fff;">
-                <i class="fa-solid fa-clock"></i>
-                <span>Coming Soon</span>
-              </div>
             </div>
             <div class="project-card__content">
               <div class="project-card__tags">
@@ -684,9 +684,9 @@
                   intake.</span>
               </p>
               <div class="project-card__links">
-                <span class="project-link" style="opacity: 0.6; cursor: not-allowed;">
-                  <i class="fa-solid fa-code"></i> In Progress
-                </span>
+                <a href="https://github.com/jamessung644/Pillosuffer" target="_blank" class="project-link">
+                  <i class="fa-brands fa-github"></i> GitHub
+                </a>
               </div>
             </div>
           </article>
@@ -698,12 +698,6 @@
                 <div class="safety-visual">
                   <i class="fa-solid fa-eye fa-3x"></i>
                 </div>
-              </div>
-              <!-- Coming Soon Badge -->
-              <div class="project-card__badge"
-                style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(99,102,241,.4); color: #fff;">
-                <i class="fa-solid fa-clock"></i>
-                <span>Coming Soon</span>
               </div>
             </div>
             <div class="project-card__content">
@@ -729,8 +723,10 @@
                   Accessibility Index (PAI).</span>
               </p>
               <div class="project-card__links">
-                <span class="project-link" style="opacity: 0.6; cursor: not-allowed;">
-                  <i class="fa-solid fa-code"></i> In Progress
+                <span class="project-link" style="cursor: default;">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span class="lang-ko">개발 완료</span>
+                  <span class="lang-en">Completed</span>
                 </span>
               </div>
             </div>
