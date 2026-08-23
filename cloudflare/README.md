@@ -1,48 +1,74 @@
-# Cloudflare Images 자동 갤러리
+# Cloudflare R2 자동 갤러리
 
-Cloudflare Images에 새 이미지를 올리면 Worker의 `/gallery.json` 응답에 자동으로 포함되고, 포트폴리오의 이미지 휠이 그 목록을 읽습니다. 브라우저에는 Cloudflare API 토큰이 노출되지 않습니다.
+Cloudflare Images 유료 저장소는 사용하지 않습니다. R2 버킷의 `gallery/` 아래에 사진을 올리면 Worker가 `/gallery.json` 목록을 만들고, 포트폴리오 이미지 휠이 이 목록을 읽습니다.
 
-## 1. Cloudflare Images 준비
+## 동작 방식
 
-- `thumb` 변형: 예) 최대 800px, WebP/AVIF 자동 최적화
-- `public` 변형: 확대 보기에 사용할 큰 이미지
-- 갤러리 이미지는 파일명을 `gallery-`로 시작해 업로드합니다.
-- 선택 사항: 업로드 metadata에 `gallery`, `alt`, `caption`, `width`, `height`를 넣을 수 있습니다.
+- 허용 확장자: `jpg`, `jpeg`, `png`, `webp`, `avif`, `gif`
+- `gallery/` 밖의 파일과 이미지가 아닌 파일은 공개 목록에서 제외합니다.
+- 최신 업로드부터 정렬합니다.
+- 같은 파일명으로 다시 올려도 R2 ETag가 URL에 포함되어 브라우저 캐시가 갱신됩니다.
+- Worker가 실패하거나 목록이 비어 있으면 사이트는 저장소의 `gallery.json`을 사용합니다.
+- 원본을 이미지 휠과 확대 보기에 함께 사용하므로 장당 2MB 이하의 WebP/JPEG를 권장합니다.
 
-## 2. Worker 배포
+## 1. 최초 한 번: R2 버킷과 Worker 만들기
+
+R2를 활성화한 다음 아래 명령을 실행합니다.
 
 ```sh
-cd cloudflare
-cp wrangler.example.jsonc wrangler.jsonc
-npx wrangler secret put CLOUDFLARE_IMAGES_TOKEN
+cd /Users/sungsuhan/Desktop/VibeCoding/mypage/.worktrees/bloub-redesign/cloudflare
+npx wrangler login
+npx wrangler r2 bucket create suhan-portfolio-gallery
 npx wrangler deploy
 ```
 
-API 토큰에는 Cloudflare Images 읽기 권한만 부여합니다. `wrangler.jsonc`의 `CLOUDFLARE_ACCOUNT_ID`와 `ALLOWED_ORIGIN`을 실제 값으로 바꿉니다.
+배포된 Worker 주소는 다음과 같습니다.
 
-## 3. 사이트 연결
+```text
+https://suhan-portfolio-gallery.suhan-sung.workers.dev
+```
 
-`index.html`의 이미지 휠에 배포된 Worker 주소를 넣습니다.
+별도의 API 토큰, Account ID, Cloudflare Images 변형 설정은 필요하지 않습니다. 버킷은 공개 버킷으로 전환하지 않아도 됩니다. Worker의 R2 바인딩만 버킷을 읽습니다.
+
+## 2. 사이트 연결
+
+`index.html`의 `data-remote-url`에 배포 주소와 `/gallery.json`을 넣습니다.
 
 ```html
 <div
   class="image-wheel"
   id="imageWheel"
-  data-remote-url="https://YOUR-WORKER.workers.dev/gallery.json"
   data-fallback-url="gallery.json"
+  data-remote-url="https://suhan-portfolio-gallery.suhan-sung.workers.dev/gallery.json"
 >
 ```
 
-Worker 또는 네트워크가 실패하면 현재 저장소의 `gallery.json`을 자동으로 사용합니다.
+Worker 주소를 모르는 상태에서 임의 주소를 넣으면 사이트가 매번 원격 요청에 실패하므로, 실제 배포 주소를 받은 다음 연결해야 합니다.
 
-## 업로드 예시 metadata
+## 3. Cloudflare 화면에서 사진 추가
 
-```json
-{
-  "gallery": true,
-  "alt": "로봇 프로토타입을 테스트하는 장면",
-  "caption": "Physical AI · Prototype",
-  "width": 1600,
-  "height": 1200
-}
+1. `Storage & databases` → `R2` → `suhan-portfolio-gallery`로 이동합니다.
+2. `Create folder`를 눌러 `gallery` 폴더를 만듭니다.
+3. `gallery` 폴더 안으로 들어가 `Upload`로 사진을 올립니다.
+4. 최대 5분 뒤 사이트를 새로고침합니다.
+
+파일명은 캡션으로도 사용됩니다. 예를 들어 `physical-ai-prototype.webp`는 `physical ai prototype`으로 표시됩니다.
+
+## CLI로 사진 한 장 올리기
+
+```sh
+cd /Users/sungsuhan/Desktop/VibeCoding/mypage/.worktrees/bloub-redesign/cloudflare
+npx wrangler r2 object put \
+  suhan-portfolio-gallery/gallery/my-photo.webp \
+  --file="/ABSOLUTE/PATH/my-photo.webp" \
+  --content-type="image/webp" \
+  --remote
 ```
+
+## 확인
+
+```sh
+curl -i "https://suhan-portfolio-gallery.suhan-sung.workers.dev/gallery.json"
+```
+
+정상이면 `200` 응답과 함께 `{ "images": [...] }`가 반환됩니다.

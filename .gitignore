@@ -4,6 +4,7 @@ Thumbs.db
 .vscode/
 .idea/
 .worktrees/
+.wrangler/
 .dev.vars
 .env
 .env.*

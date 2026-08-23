@@ -1,0 +1,17 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "suhan-portfolio-gallery",
+	"main": "gallery-worker.js",
+	"compatibility_date": "2026-08-23",
+	"workers_dev": true,
+	"vars": {
+		"ALLOWED_ORIGIN": "*"
+	},
+	"r2_buckets": [
+		{
+			"binding": "GALLERY_BUCKET",
+			"bucket_name": "suhan-portfolio-gallery",
+			"remote": true
+		}
+	]
+}
