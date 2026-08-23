@@ -87,6 +87,7 @@ const initial = await evaluate(`(() => ({
     };
   })(),
   pillosufferSlides: document.querySelectorAll('[data-project-name="pillosuffer"] [data-project-slide]').length,
+  pillosufferMainSrc: document.querySelector('[data-project-name="pillosuffer"] [data-project-slide] img')?.getAttribute('src') || '',
   pillosufferRadius: parseFloat(getComputedStyle(document.querySelector('[data-project-name="pillosuffer"] .project-showcase__media')).borderTopLeftRadius) || 0,
   maskProjectPresent: document.body.textContent.includes('Mask R-CNN Reproduction'),
   brokenProjectMedia: [...document.querySelectorAll('.project-showcase__media img')].filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.currentSrc),
@@ -112,9 +113,15 @@ await evaluate(`(() => {
 })()`);
 await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-media-desktop-fixed.png');
-const pillosufferSlider = await evaluate(`(() => {
+await evaluate(`(() => {
   const project = document.querySelector('[data-project-name="pillosuffer"]');
   window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 500));
+await screenshot('portfolio-pillosuffer-main-desktop-fixed.png');
+const pillosufferSlider = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="pillosuffer"]');
   const next = project.querySelector('[data-project-slider-next]');
   if (!next) return { advanced: false, activeIndex: -1, counter: '' };
   next.click();
@@ -229,13 +236,14 @@ const checks = {
   fiveProjectShowcases: initial.projectShowcases === 5,
   oneProjectArchiveItem: initial.projectArchiveItems === 1,
   requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
-  awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상 · 1위', 'pillosuffer:우수상']),
+  awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상 · 1위', 'pillosuffer:우수상 · 장려상']),
   awardBadgesAreCompact: initial.projectAwardHeights.length === 2 && Math.max(...initial.projectAwardHeights) <= 36,
   codeBuddyUsesGithubIconCard: initial.codeBuddy.isShowcase && initial.codeBuddy.iconSrc === 'Img/codebuddy_icon.png' && codeBuddyIconLoaded && initial.codeBuddy.iconWidth >= 96 && initial.codeBuddy.mediaRadius >= 24,
-  pillosufferHasTwoSlides: initial.pillosufferSlides === 2,
+  pillosufferHasThreeSlides: initial.pillosufferSlides === 3,
+  pillosufferAppIsMain: initial.pillosufferMainSrc === 'Img/projects/pillosuffer-app-home.webp',
   pillosufferUsesAppleRounding: initial.pillosufferRadius >= 24,
-  pillosufferSliderAdvances: pillosufferSlider.advanced && pillosufferSlider.activeIndex === 1 && pillosufferSlider.counter === '2 / 2',
-  pillosufferPhotoExpands: pillosufferLightbox.open && /pillosuffer-encouragement-2026\.webp$/.test(pillosufferLightbox.src),
+  pillosufferSliderAdvances: pillosufferSlider.advanced && pillosufferSlider.activeIndex === 1 && pillosufferSlider.counter === '2 / 3',
+  pillosufferPhotoExpands: pillosufferLightbox.open && /pillosuffer-award-2026\.webp$/.test(pillosufferLightbox.src),
   pillosufferKeyboardAndSwipe: pillosufferAccessibleControls.keyboardIndex === 0 && pillosufferAccessibleControls.swipeIndex === 1,
   maskProjectRemoved: initial.maskProjectPresent === false,
   projectMediaLoads: initial.brokenProjectMedia.length === 0,
