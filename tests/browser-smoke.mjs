@@ -51,7 +51,7 @@ async function navigate(width, height) {
   await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
   await call('Page.navigate', { url: previewUrl });
   await waitFor("document.readyState === 'complete' && document.querySelectorAll('.image-wheel__item').length === 15");
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 }
 
 async function screenshot(filename) {
@@ -67,6 +67,11 @@ await navigate(1440, 1000);
 
 const initial = await evaluate(`(() => ({
   count: document.querySelectorAll('.image-wheel__item').length,
+  bloubSource: document.querySelector('[data-original-bloub]')?.getAttribute('src') || '',
+  projectShowcases: document.querySelectorAll('.project-showcase').length,
+  projectArchiveItems: document.querySelectorAll('.project-archive__item').length,
+  maskProjectPresent: document.body.textContent.includes('Mask R-CNN Reproduction'),
+  brokenProjectMedia: [...document.querySelectorAll('.project-showcase__media img')].filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.currentSrc),
   bodyWidth: document.body.scrollWidth,
   viewportWidth: innerWidth,
   originalsLoaded: performance.getEntriesByType('resource').map((entry) => entry.name).filter((name) => /\\/Img\\/(?:[1-9]|1[0-5])\\.(?:jpg|jpeg|png)(?:$|\\?)/.test(name)),
@@ -80,8 +85,15 @@ await evaluate(`(() => {
   window.scrollTo(0, projects.offsetTop + 120);
   return true;
 })()`);
-await new Promise((resolve) => setTimeout(resolve, 120));
+await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-desktop-fixed.png');
+await evaluate(`(() => {
+  const project = document.querySelectorAll('.project-showcase')[1];
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 800));
+await screenshot('portfolio-projects-media-desktop-fixed.png');
 await evaluate(`(() => {
   const stage = document.querySelector('[data-wheel-stage]');
   window.scrollTo(0, stage.getBoundingClientRect().top + scrollY - 170);
@@ -127,6 +139,14 @@ const mobile = await evaluate(`(() => ({
 await screenshot('portfolio-hero-mobile-fixed.png');
 await evaluate(`(() => {
   document.documentElement.style.scrollBehavior = 'auto';
+  const project = document.querySelector('.project-showcase');
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 72);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 800));
+await screenshot('portfolio-projects-mobile-fixed.png');
+await evaluate(`(() => {
+  document.documentElement.style.scrollBehavior = 'auto';
   const stage = document.querySelector('[data-wheel-stage]');
   window.scrollTo(0, stage.getBoundingClientRect().top + scrollY - 120);
   return true;
@@ -136,6 +156,11 @@ await screenshot('portfolio-wheel-mobile-fixed.png');
 
 const checks = {
   fifteenImages: initial.count === 15,
+  usesOriginalBloubSvg: initial.bloubSource === 'Img/bloub-squircle-excite-rouge-anime.svg',
+  fourProjectShowcases: initial.projectShowcases === 4,
+  threeProjectArchiveItems: initial.projectArchiveItems === 3,
+  maskProjectRemoved: initial.maskProjectPresent === false,
+  projectMediaLoads: initial.brokenProjectMedia.length === 0,
   noDesktopOverflow: initial.bodyWidth <= initial.viewportWidth,
   originalsDeferred: initial.originalsLoaded.length === 0,
   noBrokenImages: initial.brokenImages.length === 0,
