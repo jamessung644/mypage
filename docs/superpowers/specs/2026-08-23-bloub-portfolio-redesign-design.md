@@ -86,36 +86,71 @@ The drone tourism system, Eyes-Road, Pill Good, and Signature MK1 remain availab
 
 Every visible state label must reflect evidence already present in the local content or public repository. Repository timestamps alone will not be presented as project completion dates.
 
-## Gallery Performance
+## Gallery Experience and Performance
 
-The gallery currently serves 15 local originals from GitHub Pages. It does not use the GitHub API. The originals total roughly 1.7MB and range from 900 to 1200 pixels wide, so a separate CDN is unnecessary at the current scale.
+The gallery becomes a Framer-inspired image wheel rather than a static grid. Cards occupy positions around a shallow three-dimensional orbit so multiple photos remain visible while one or two frames take visual priority.
 
-### Selected approach: local responsive derivatives
+### Image wheel behavior
 
-- Keep originals in `Img/` for the lightbox and archival quality.
-- Generate WebP thumbnails at approximately 480 and 800 pixels wide in `Img/gallery/`.
-- Use `<picture>` or responsive `srcset`/`sizes` so phones receive the smaller asset.
-- Keep `loading="lazy"` and add explicit `width`, `height`, and `decoding="async"` to prevent layout shifts and reduce main-thread work.
-- Load the original only when the lightbox opens; do not preload all originals.
-- Give the first visible gallery row a slightly higher fetch priority only when it approaches the viewport.
-- Preserve next/previous keyboard navigation and add meaningful alt text where the image subject can be determined.
-- Add a repeatable local optimization script or documented command so future photos follow the same pipeline.
+- The wheel rotates automatically at a calm, constant speed after the gallery enters the viewport.
+- A labeled range slider below the wheel maps directly to the complete orbit and allows precise manual rotation.
+- Pointer hover anywhere inside the image stage pauses automatic rotation immediately; leaving the stage resumes it smoothly.
+- Keyboard focus inside the stage also pauses rotation. Each image is a real button with a descriptive accessible label.
+- Touch and pointer dragging rotate the wheel directly. A drag must not accidentally trigger image enlargement.
+- Clicking or tapping a stationary image opens the existing lightbox at the large-image URL.
+- Opening the lightbox pauses the wheel. Closing it restores focus to the originating image and resumes only when no other pause condition remains.
+- Slider input, dragging, and wheel rotation stay synchronized without snapping.
+- When the document is hidden or the gallery is outside the viewport, animation stops to avoid background work.
+- With `prefers-reduced-motion: reduce`, automatic rotation is disabled, transition duration is reduced to zero, and the slider, keyboard, and lightbox remain fully usable.
+- On narrow screens, the orbit uses fewer simultaneous large cards and smaller depth offsets so it does not create horizontal page overflow.
 
-If the gallery later grows to hundreds of images or is updated outside Git, migrate the same markup to an image CDN such as Cloudflare Images. Introducing a CDN now would add upload workflow and vendor configuration without a meaningful benefit.
+### Gallery data contract
+
+The image wheel consumes a source-independent manifest:
+
+```json
+{
+  "images": [
+    {
+      "id": "stable-id",
+      "thumb": "https://example.com/thumbnail.webp",
+      "large": "https://example.com/large.webp",
+      "alt": "Project award moment",
+      "caption": "2026 · Project award",
+      "uploaded": "2026-08-23T00:00:00Z"
+    }
+  ]
+}
+```
+
+The initial implementation supplies the current 15 local images through `gallery.json`. The component must accept the same schema from a remote endpoint without changing its rendering or interaction code.
+
+### Cloudflare automatic gallery
+
+Cloudflare Images is the preferred hosted source. A small Cloudflare Worker uses the Images binding to list hosted images, filters filenames beginning with `gallery-`, sorts them by upload time, and returns the manifest above. It exposes no account token to the browser.
+
+- Uploading a file such as `gallery-drone-demo.jpg` through Cloudflare Hosted Images makes it appear automatically after the Worker cache expires.
+- Predefined public variants provide a roughly 800-pixel wheel image and an approximately 1800-pixel lightbox image.
+- The Worker returns cache and origin-restricted CORS headers. The default cache target is five minutes.
+- If the remote endpoint is unavailable or returns no valid images, the site falls back to the local `gallery.json` manifest.
+- The repository includes Worker source and an example Wrangler configuration, but deployment and account binding require the user's Cloudflare account.
+- R2 remains an alternative only if the user confirms an existing R2 workflow; public R2 buckets cannot list their root contents directly, so they would still require a Worker-backed manifest.
+
+The existing local originals total roughly 1.7MB and remain available during migration. Images use `loading="lazy"`, explicit intrinsic dimensions where known, and `decoding="async"`. The wheel requests thumbnails only; a large asset is requested only when its lightbox opens.
 
 ## Implementation Boundaries
 
 - Continue using static `index.html`, `style.css`, and `script.js`.
-- Add only local assets and small, dependency-free helper scripts required for gallery generation.
+- Add only local assets and small, dependency-free scripts required for the character, image wheel, and gallery data adapter.
 - Preserve the user's existing uncommitted changes in `index.html` and `style.css`.
-- Avoid a framework migration, CMS, database, or runtime image service.
+- Avoid a framework migration, CMS, or database. Cloudflare Images and one Worker are the only optional runtime services.
 - Remote icon and font dependencies may remain initially, but the page must retain usable fallbacks.
 - JavaScript enhancements must fail safely: all content and links remain available when JavaScript is disabled.
 
 ## Accessibility and Responsive Behavior
 
 - Maintain visible keyboard focus on navigation, project cards, language controls, gallery items, and lightbox controls.
-- Use buttons for interactive gallery items and provide labels that describe their action.
+- Use buttons for interactive wheel items and provide labels that describe their action.
 - Lock focus inside the lightbox while open and restore it to the triggering thumbnail on close.
 - Preserve sufficient text and control contrast on the dusty background.
 - Mobile layout becomes single-column; the character is smaller and does not push the primary introduction below the first viewport.
@@ -125,7 +160,7 @@ If the gallery later grows to hundreds of images or is updated outside Git, migr
 ## Failure Handling
 
 - If the supplied GIF fails to load, the static CSS/SVG character is shown immediately.
-- If a responsive thumbnail is absent, the original image remains a valid fallback.
+- If a remote gallery endpoint or responsive variant is unavailable, the local gallery manifest and original image remain valid fallbacks.
 - If remote fonts or icons fail, system fonts and text labels keep navigation understandable.
 - If local storage is unavailable, Korean is used and the loader may replay without breaking the page.
 
@@ -134,7 +169,9 @@ If the gallery later grows to hundreds of images or is updated outside Git, migr
 - Validate all internal anchors, external project links, language switching, mobile navigation, contact behavior, videos, and lightbox interactions.
 - Check desktop and mobile layouts at representative narrow, tablet, and wide viewport sizes.
 - Verify keyboard-only operation and reduced-motion behavior.
-- Confirm that no gallery original downloads before its lightbox is opened, except when directly required as a fallback.
+- Confirm that no gallery large image downloads before its lightbox is opened, except when directly required as a fallback.
+- Verify hover, keyboard focus, drag, page visibility, off-screen state, and lightbox state independently pause and resume the image wheel correctly.
+- Verify the range slider and displayed wheel position remain synchronized through automatic and manual movement.
 - Compare initial transferred image bytes before and after optimization.
 - Run an automated markup/script sanity check and inspect final screenshots for spacing, hierarchy, overflow, and visual consistency.
 
@@ -143,5 +180,6 @@ If the gallery later grows to hundreds of images or is updated outside Git, migr
 - The portfolio has a distinctive but professional Bloub-led identity.
 - The latest projects and their evidence are understandable without opening GitHub.
 - The character adds one coherent interactive moment without obscuring content.
-- Mobile gallery loading transfers appropriately sized thumbnails rather than all full-size originals.
+- Mobile gallery loading transfers appropriately sized thumbnails rather than all full-size originals, and the image wheel never creates page-level horizontal overflow.
+- Uploading a `gallery-` image to the configured Cloudflare Images account adds it to the wheel without an HTML or JavaScript deployment.
 - Existing bilingual content, awards, media, and user edits remain intact.
