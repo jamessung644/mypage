@@ -7,6 +7,7 @@ const {
   calculateCarouselSlotX,
   normalizeLocalFallback,
   normalizeManifest,
+  resolveCarouselTarget,
   resolveFilmstripPosition,
   resolvePointerRelease,
   shouldAnimate,
@@ -120,4 +121,11 @@ test('resolveFilmstripPosition wraps the active thumbnail and reports a human po
   assert.deepEqual(resolveFilmstripPosition?.(22, 22), { index: 0, current: 1, total: 22 });
   assert.deepEqual(resolveFilmstripPosition?.(-1, 22), { index: 21, current: 22, total: 22 });
   assert.deepEqual(resolveFilmstripPosition?.(4, 0), { index: 0, current: 0, total: 0 });
+});
+
+test('resolveCarouselTarget chooses the shortest rotation to a clicked thumbnail', () => {
+  assert.equal(resolveCarouselTarget?.(2, 20, 22), -2);
+  assert.equal(resolveCarouselTarget?.(20, 2, 22), 24);
+  assert.equal(resolveCarouselTarget?.(5, 8, 22), 8);
+  assert.equal(resolveCarouselTarget?.(5, 8, 0), 0);
 });

@@ -724,6 +724,7 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   flex: 0 0 30px;
   width: 30px;
   height: 20px;
+  padding: 0;
   overflow: hidden;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -732,8 +733,12 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   filter: grayscale(.7);
   transform: translateY(0);
   transition: opacity .25s ease, filter .25s ease, border-color .25s ease, transform .25s ease;
+  cursor: pointer;
 }
 .image-wheel__thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.image-wheel__thumbnail:hover,
+.image-wheel__thumbnail:focus-visible { opacity: .72; filter: none; }
+.image-wheel__thumbnail:focus-visible { outline: 2px solid var(--graphite); outline-offset: 2px; }
 .image-wheel__thumbnail.is-active {
   border-color: var(--bloub-rouge);
   opacity: 1;

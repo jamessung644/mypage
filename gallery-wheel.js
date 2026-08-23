@@ -106,6 +106,18 @@
     return { index, current: index + 1, total };
   }
 
+  function resolveCarouselTarget(currentProgress, targetIndex, itemCount) {
+    const total = Math.max(Math.trunc(Number(itemCount) || 0), 0);
+    if (!total) return 0;
+    const current = Number(currentProgress) || 0;
+    const target = ((Math.trunc(Number(targetIndex) || 0) % total) + total) % total;
+    const currentWrapped = ((current % total) + total) % total;
+    let delta = target - currentWrapped;
+    if (delta > total / 2) delta -= total;
+    else if (delta < -total / 2) delta += total;
+    return current + delta;
+  }
+
   async function fetchManifest(url) {
     if (!url) return [];
     const response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -164,6 +176,7 @@
     let lastTime = 0;
     let animationFrame = 0;
     let dragging = null;
+    let thumbnailNavigation = null;
     let suppressClick = false;
     let currentSlotX = 46;
 
@@ -222,10 +235,53 @@
       });
     };
 
+    const navigateToThumbnail = (targetIndex) => {
+      if (!items.length) return;
+      const targetProgress = resolveCarouselTarget(progress, targetIndex, items.length);
+      const targetPosition = resolveFilmstripPosition(targetIndex, items.length);
+      const distance = Math.abs(targetProgress - progress);
+      cycleElapsed = 0;
+
+      if (distance < 0.001 || reducedMotionQuery.matches) {
+        thumbnailNavigation = null;
+        activeIndex = targetPosition.index;
+        progress = activeIndex;
+        render(progress);
+        updateFilmstrip(activeIndex, true);
+        return;
+      }
+
+      thumbnailNavigation = {
+        elapsed: 0,
+        duration: Math.min(1400, 480 + distance * 100),
+        startProgress: progress,
+        targetProgress,
+        targetIndex: targetPosition.index,
+      };
+    };
+
     const tick = (time) => {
       const elapsed = lastTime ? Math.min(time - lastTime, 50) : 0;
       lastTime = time;
-      if (shouldAnimate(pauses, reducedMotionQuery.matches, items.length)) {
+      if (thumbnailNavigation) {
+        thumbnailNavigation.elapsed += elapsed;
+        const step = calculateAutoplayStep(
+          thumbnailNavigation.elapsed,
+          0,
+          thumbnailNavigation.duration
+        );
+        const nextProgress = thumbnailNavigation.startProgress
+          + (thumbnailNavigation.targetProgress - thumbnailNavigation.startProgress) * step.offset;
+        render(nextProgress);
+        if (step.complete) {
+          activeIndex = thumbnailNavigation.targetIndex;
+          thumbnailNavigation = null;
+          progress = activeIndex;
+          cycleElapsed = 0;
+          render(progress);
+          updateFilmstrip(activeIndex, true);
+        }
+      } else if (shouldAnimate(pauses, reducedMotionQuery.matches, items.length)) {
         cycleElapsed += elapsed;
         const step = calculateAutoplayStep(cycleElapsed, 2500, 900);
         render(activeIndex + step.offset);
@@ -279,10 +335,10 @@
         thumbnailsRoot.innerHTML = '';
         const thumbnailFragment = document.createDocumentFragment();
         images.forEach((image, index) => {
-          const thumbnail = document.createElement('span');
+          const thumbnail = document.createElement('button');
+          thumbnail.type = 'button';
           thumbnail.className = 'image-wheel__thumbnail';
-          thumbnail.setAttribute('role', 'listitem');
-          thumbnail.setAttribute('aria-label', `${index + 1}번째 사진`);
+          thumbnail.setAttribute('aria-label', `${index + 1}번째 사진으로 이동`);
 
           const thumbnailImage = document.createElement('img');
           thumbnailImage.src = image.thumb;
@@ -290,6 +346,7 @@
           thumbnailImage.loading = 'lazy';
           thumbnailImage.decoding = 'async';
           thumbnail.appendChild(thumbnailImage);
+          thumbnail.addEventListener('click', () => navigateToThumbnail(index));
           thumbnailFragment.appendChild(thumbnail);
         });
         thumbnailsRoot.appendChild(thumbnailFragment);
@@ -428,6 +485,7 @@
     mount,
     normalizeLocalFallback,
     normalizeManifest,
+    resolveCarouselTarget,
     resolveFilmstripPosition,
     resolvePointerRelease,
     shouldAnimate,
