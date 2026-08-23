@@ -324,11 +324,16 @@ const wheelPerspective = await evaluate(`(() => {
   const stage = document.querySelector('[data-wheel-stage]');
   const items = [...document.querySelectorAll('.image-wheel__item')];
   const tilts = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-tilt-y')) || 0);
+  const radialAngles = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-radial-z')) || 0);
   const transforms = items.map((item) => getComputedStyle(item).transform);
+  const firstStyle = getComputedStyle(items[0]);
   return {
     perspective: getComputedStyle(stage).perspective,
     minimumTilt: Math.min(...tilts.map(Math.abs)),
     maximumTilt: Math.max(...tilts.map(Math.abs)),
+    maximumRadialAngle: Math.max(...radialAngles.map(Math.abs)),
+    hasFrontFacingCard: items.some((_, index) => Math.abs(tilts[index]) < 10 && Math.abs(radialAngles[index]) < 10),
+    cardAspectRatio: Number.parseFloat(firstStyle.height) / Number.parseFloat(firstStyle.width),
     uses3dTransforms: transforms.some((transform) => transform.startsWith('matrix3d(')),
   };
 })()`);
@@ -426,7 +431,7 @@ const checks = {
   noBrokenImages: initial.brokenImages.length === 0,
   hoverPauses: beforePause === afterPause,
   manualSlider: manualValue === 500,
-  wheelUsesPerspectiveTilt: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 6 && wheelPerspective.maximumTilt >= 20 && wheelPerspective.uses3dTransforms,
+  wheelUsesRadialSwatchGeometry: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 10 && wheelPerspective.maximumTilt >= 60 && wheelPerspective.maximumRadialAngle >= 80 && wheelPerspective.hasFrontFacingCard && wheelPerspective.cardAspectRatio >= 1.2 && wheelPerspective.uses3dTransforms,
   lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/1.jpg',
   noMobileOverflow: mobile.bodyWidth === mobile.viewportWidth,
   legacyGridHidden: mobile.legacyDisplay === 'none',
