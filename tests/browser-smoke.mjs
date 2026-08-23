@@ -143,6 +143,46 @@ const bloubPointerMotion = await evaluate(`(async () => {
   };
 })()`);
 
+const bloubTrackingBlink = await evaluate(`(async () => {
+  const svg = document.querySelector('svg[data-bloub-gaze]');
+  const eye = svg?.querySelector('[data-bloub-eye]');
+  if (!svg || !eye || !window.BloubGaze) return { observed: false, lid: 1, verticalScale: 1 };
+  const rect = svg.getBoundingClientRect();
+  window.dispatchEvent(new PointerEvent('pointermove', {
+    clientX: rect.left + rect.width / 2,
+    clientY: rect.top + rect.height / 2,
+    pointerType: 'mouse',
+  }));
+  const deadline = performance.now() + 6500;
+  while (performance.now() < deadline) {
+    const lid = window.BloubGaze.liveliness(performance.now() / 1000).lid;
+    if (lid < .18) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      const values = (eye.getAttribute('transform') || '')
+        .replace(/^matrix\(|\)$/g, '')
+        .trim()
+        .split(/[ ,]+/)
+        .map(Number);
+      return { observed: true, lid, verticalScale: Math.abs(values[3]) };
+    }
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }
+  return { observed: false, lid: 1, verticalScale: 1 };
+})()`);
+
+const bloubUpwardMotion = await evaluate(`(async () => {
+  const svg = document.querySelector('svg[data-bloub-gaze]');
+  if (!svg) return { mounted: false, pitch: 99 };
+  const rect = svg.getBoundingClientRect();
+  window.dispatchEvent(new PointerEvent('pointermove', {
+    clientX: rect.left + rect.width / 2,
+    clientY: Math.max(1, rect.top - 20),
+    pointerType: 'mouse',
+  }));
+  for (let i = 0; i < 24; i++) await new Promise((resolve) => requestAnimationFrame(resolve));
+  return { mounted: true, pitch: Number(svg.dataset.pitch) };
+})()`);
+
 await screenshot('portfolio-hero-desktop-fixed.png');
 await evaluate(`(() => {
   document.documentElement.style.scrollBehavior = 'auto';
@@ -309,6 +349,8 @@ const checks = {
   bloubTracksContinuously: bloubPointerMotion.nearRight.length === 2
     && JSON.stringify(bloubPointerMotion.center) !== JSON.stringify(bloubPointerMotion.nearRight)
     && JSON.stringify(bloubPointerMotion.nearRight) !== JSON.stringify(bloubPointerMotion.farRight),
+  bloubBlinksWhileTracking: bloubTrackingBlink.observed && bloubTrackingBlink.verticalScale < .3,
+  bloubLooksUpAboveMascot: bloubUpwardMotion.mounted && bloubUpwardMotion.pitch >= 12,
   bloubReturnsToLivingRest: bloubPointerMotion.mode === 'rest'
     && JSON.stringify(bloubPointerMotion.rest) !== JSON.stringify(bloubPointerMotion.farRight),
   bloubStaysCenteredOnMobile: mobileBloubGaze.mounted
@@ -347,6 +389,6 @@ const checks = {
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, mobileBloubGaze, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;

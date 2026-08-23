@@ -11,7 +11,8 @@
   const BASE_GAZE = Object.freeze({ yaw: 6, pitch: -14, roll: 0 });
   const EYE_SPLIT = 19.5;
   const YAW_MAX = 16;
-  const PITCH_MAX = 13;
+  const PITCH_UPPER = 13;
+  const PITCH_LOWER = -27;
   const LOOK_MORPH = .24;
   const EYE_PATH = 'M-20 -8A20 20 0 0 1 0 -28L0 -28A20 20 0 0 1 20 -8L20 8A20 20 0 0 1 0 28L0 28A20 20 0 0 1 -20 8Z';
   const EYE_TILTS = [-10, 10];
@@ -44,7 +45,9 @@
     const y = clamp(normalizedY, -1, 1);
     return {
       yaw: BASE_GAZE.yaw + x * YAW_MAX,
-      pitch: BASE_GAZE.pitch - y * PITCH_MAX,
+      pitch: y < 0
+        ? lerp(BASE_GAZE.pitch, PITCH_UPPER, -y)
+        : lerp(BASE_GAZE.pitch, PITCH_LOWER, y),
       roll: BASE_GAZE.roll,
     };
   }

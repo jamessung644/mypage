@@ -82,7 +82,7 @@
       if (!bounds.width || !bounds.height) return null;
       return gaze.lookTarget(
         (pointer.x - (bounds.left + bounds.width / 2)) / Math.max(1, window.innerWidth / 2),
-        (pointer.y - (bounds.top + bounds.height / 2)) / Math.max(1, window.innerHeight / 2),
+        (pointer.y - (bounds.top + bounds.height / 2)) / Math.max(1, bounds.height / 2),
       );
     };
 
@@ -108,7 +108,7 @@
       };
       current = gaze.easeGaze(current, target, delta);
       svg.dataset.look = pointerTarget ? 'tracking' : 'rest';
-      paint(current, pointerTarget ? 1 : life.lid);
+      paint(current, life.lid);
       frame = requestAnimationFrame(tick);
     };
 

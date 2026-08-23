@@ -16,13 +16,21 @@ test('cursor offsets continuously steer the supplied excite expression', () => {
   assert.equal(typeof gaze.lookTarget, 'function');
 
   assert.deepEqual(gaze.lookTarget(0, 0), { yaw: 6, pitch: -14, roll: 0 });
-  assert.deepEqual(gaze.lookTarget(1, -1), { yaw: 22, pitch: -1, roll: 0 });
-  assert.deepEqual(gaze.lookTarget(4, -3), { yaw: 22, pitch: -1, roll: 0 });
+  assert.deepEqual(gaze.lookTarget(1, -1), { yaw: 22, pitch: 13, roll: 0 });
+  assert.deepEqual(gaze.lookTarget(4, -3), { yaw: 22, pitch: 13, roll: 0 });
 
   const almostRight = gaze.lookTarget(0.49, 0);
   const right = gaze.lookTarget(0.5, 0);
   assert.notEqual(almostRight.yaw, right.yaw);
   assert.ok(right.yaw - almostRight.yaw < 0.2);
+});
+
+test('a cursor above the mascot moves the eyes into the upper hemisphere', () => {
+  const upperEye = gaze.eyeFrames(gaze.lookTarget(0, -1))[0];
+  const lowerEye = gaze.eyeFrames(gaze.lookTarget(0, 1))[0];
+
+  assert.ok(upperEye.matrix[5] <= -20, `expected upper eye y <= -20, got ${upperEye.matrix[5]}`);
+  assert.ok(lowerEye.matrix[5] >= 40, `expected lower eye y >= 40, got ${lowerEye.matrix[5]}`);
 });
 
 test('spherical projection reproduces the measured excite eye pose', () => {
