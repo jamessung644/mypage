@@ -196,12 +196,14 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
 .portfolio-redesign .social__link:hover { background: var(--bloub-rouge); color: white; transform: translateY(-2px); }
 .portfolio-redesign .hero__scroll { color: var(--graphite-soft); }
 
-/* Bloub — supplied artwork is rendered intact, including its own motion. */
+/* Bloub — supplied red body with the repository's continuous spherical gaze. */
 .bloub { display: grid; justify-items: center; gap: 1.1rem; pointer-events: none; }
 .bloub__asset {
   display: block;
   width: clamp(260px, 31vw, 470px);
   height: auto;
+  aspect-ratio: 1;
+  overflow: visible;
   filter: drop-shadow(0 28px 30px rgba(65, 42, 37, .16));
 }
 .bloub__note { font-family: var(--font-code); font-size: .65rem; letter-spacing: .15em; color: var(--graphite-soft); }
