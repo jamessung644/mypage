@@ -72,6 +72,9 @@ const initial = await evaluate(`(() => ({
   projectShowcases: document.querySelectorAll('.project-showcase').length,
   projectArchiveItems: document.querySelectorAll('.project-archive__item').length,
   projectOrder: [...document.querySelectorAll('.project-sequence [data-project-name]')].map((project) => project.dataset.projectName),
+  projectAwards: [...document.querySelectorAll('.project-award-badge')].map((badge) => (badge.closest('[data-project-name]')?.dataset.projectName || '') + ':' + badge.textContent.trim()),
+  pillosufferSlides: document.querySelectorAll('[data-project-name="pillosuffer"] [data-project-slide]').length,
+  pillosufferRadius: parseFloat(getComputedStyle(document.querySelector('[data-project-name="pillosuffer"] .project-showcase__media')).borderTopLeftRadius) || 0,
   maskProjectPresent: document.body.textContent.includes('Mask R-CNN Reproduction'),
   brokenProjectMedia: [...document.querySelectorAll('.project-showcase__media img')].filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.currentSrc),
   bodyWidth: document.body.scrollWidth,
@@ -96,6 +99,39 @@ await evaluate(`(() => {
 })()`);
 await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-media-desktop-fixed.png');
+const pillosufferSlider = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="pillosuffer"]');
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
+  const next = project.querySelector('[data-project-slider-next]');
+  if (!next) return { advanced: false, activeIndex: -1, counter: '' };
+  next.click();
+  return {
+    advanced: true,
+    activeIndex: [...project.querySelectorAll('[data-project-slide]')].findIndex((slide) => slide.classList.contains('is-active')),
+    counter: project.querySelector('[data-project-slider-count]')?.textContent.trim() || '',
+  };
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 500));
+await screenshot('portfolio-pillosuffer-slider-desktop-fixed.png');
+const pillosufferLightbox = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="pillosuffer"]');
+  project.querySelector('.project-slider__slide.is-active')?.click();
+  const box = document.getElementById('lightbox');
+  const result = { open: box.classList.contains('open'), src: document.getElementById('lightboxImg').getAttribute('src') || '' };
+  if (result.open) window.portfolioLightbox.close();
+  return result;
+})()`);
+const pillosufferAccessibleControls = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="pillosuffer"]');
+  const slider = project.querySelector('[data-project-slider]');
+  const slides = [...project.querySelectorAll('[data-project-slide]')];
+  slider.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+  const keyboardIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+  slider.dispatchEvent(new PointerEvent('pointerdown', { clientX: 280, bubbles: true }));
+  slider.dispatchEvent(new PointerEvent('pointerup', { clientX: 180, bubbles: true }));
+  const swipeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+  return { keyboardIndex, swipeIndex };
+})()`);
 await evaluate(`(() => {
   const stage = document.querySelector('[data-wheel-stage]');
   window.scrollTo(0, stage.getBoundingClientRect().top + scrollY - 170);
@@ -148,6 +184,13 @@ await evaluate(`(() => {
 await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-mobile-fixed.png');
 await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="pillosuffer"]');
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 72);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 500));
+await screenshot('portfolio-pillosuffer-slider-mobile-fixed.png');
+await evaluate(`(() => {
   document.documentElement.style.scrollBehavior = 'auto';
   const stage = document.querySelector('[data-wheel-stage]');
   window.scrollTo(0, stage.getBoundingClientRect().top + scrollY - 120);
@@ -160,8 +203,14 @@ const checks = {
   fifteenImages: initial.count === 15,
   usesOriginalBloubSvg: initial.bloubSource === 'Img/bloub-squircle-excite-rouge-anime.svg',
   fourProjectShowcases: initial.projectShowcases === 4,
-  threeProjectArchiveItems: initial.projectArchiveItems === 3,
-  originalProjectOrderPreserved: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pill-good', 'signature-mk1', 'code-buddy', 'pillosuffer', 'eyes-road', 'brave-tylenol']),
+  twoProjectArchiveItems: initial.projectArchiveItems === 2,
+  requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
+  awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상 · 1위', 'pillosuffer:우수상']),
+  pillosufferHasTwoSlides: initial.pillosufferSlides === 2,
+  pillosufferUsesAppleRounding: initial.pillosufferRadius >= 24,
+  pillosufferSliderAdvances: pillosufferSlider.advanced && pillosufferSlider.activeIndex === 1 && pillosufferSlider.counter === '2 / 2',
+  pillosufferPhotoExpands: pillosufferLightbox.open && /pillosuffer-encouragement-2026\.webp$/.test(pillosufferLightbox.src),
+  pillosufferKeyboardAndSwipe: pillosufferAccessibleControls.keyboardIndex === 0 && pillosufferAccessibleControls.swipeIndex === 1,
   maskProjectRemoved: initial.maskProjectPresent === false,
   projectMediaLoads: initial.brokenProjectMedia.length === 0,
   noDesktopOverflow: initial.bodyWidth <= initial.viewportWidth,
@@ -175,6 +224,6 @@ const checks = {
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;
