@@ -325,12 +325,15 @@ const wheelPerspective = await evaluate(`(() => {
   const items = [...document.querySelectorAll('.image-wheel__item')];
   const tilts = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-tilt-y')) || 0);
   const rotations = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-rotation')) || 0);
+  const opacities = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-opacity')) || 0);
   const transforms = items.map((item) => getComputedStyle(item).transform);
   const firstStyle = getComputedStyle(items[0]);
+  const backIndex = opacities.indexOf(Math.min(...opacities));
   return {
     perspective: getComputedStyle(stage).perspective,
     minimumTilt: Math.min(...tilts.map(Math.abs)),
     maximumTilt: Math.max(...tilts.map(Math.abs)),
+    backCardTilt: Math.abs(tilts[backIndex]),
     maximumRotation: Math.max(...rotations.map(Math.abs)),
     hasFrontFacingCard: items.some((_, index) => Math.abs(tilts[index]) < 10 && Math.abs(rotations[index]) < 1),
     cardAspectRatio: Number.parseFloat(firstStyle.height) / Number.parseFloat(firstStyle.width),
@@ -431,7 +434,7 @@ const checks = {
   noBrokenImages: initial.brokenImages.length === 0,
   hoverPauses: beforePause === afterPause,
   manualSlider: manualValue === 500,
-  wheelUsesLandscape70DegreeTilt: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 10 && wheelPerspective.maximumTilt >= 69.5 && wheelPerspective.maximumTilt <= 70.5 && wheelPerspective.maximumRotation <= 3.6 && wheelPerspective.hasFrontFacingCard && wheelPerspective.cardAspectRatio < 0.8 && wheelPerspective.uses3dTransforms,
+  wheelTurnsBackCardsUpTo90Degrees: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 10 && wheelPerspective.maximumTilt >= 85 && wheelPerspective.maximumTilt <= 90.5 && wheelPerspective.backCardTilt >= 85 && wheelPerspective.maximumRotation <= 3.6 && wheelPerspective.hasFrontFacingCard && wheelPerspective.cardAspectRatio < 0.8 && wheelPerspective.uses3dTransforms,
   lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/1.jpg',
   noMobileOverflow: mobile.bodyWidth === mobile.viewportWidth,
   legacyGridHidden: mobile.legacyDisplay === 'none',

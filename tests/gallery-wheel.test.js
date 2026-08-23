@@ -34,17 +34,19 @@ test('calculateWheelFrame produces a bounded elliptical orbit and depth', () => 
   assert.ok(frame.opacity >= 0.45 && frame.opacity <= 1);
 });
 
-test('calculateWheelFrame restores the landscape wheel with at most 70 degree side tilt', () => {
+test('calculateWheelFrame turns continuously from the front to a 90 degree back card', () => {
   const right = calculateWheelFrame(0, 4, 0);
   const front = calculateWheelFrame(0, 4, 0.25);
   const left = calculateWheelFrame(2, 4, 0);
+  const back = calculateWheelFrame(0, 4, 0.75);
 
   assert.equal(right.rotationDeg, -3.5);
-  assert.equal(right.rotationYDeg, -70);
+  assert.equal(right.rotationYDeg, -45);
   assert.ok(Math.abs(front.rotationDeg) < 0.001);
   assert.ok(Math.abs(front.rotationYDeg) < 0.001);
   assert.equal(left.rotationDeg, 3.5);
-  assert.equal(left.rotationYDeg, 70);
+  assert.equal(left.rotationYDeg, 45);
+  assert.equal(Math.abs(back.rotationYDeg), 90);
 });
 
 test('shouldAnimate requires multiple images and no pause reasons', () => {

@@ -3,7 +3,7 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.GalleryWheel = api;
 })(typeof window !== 'undefined' ? window : globalThis, function buildGalleryWheelApi() {
-  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 70 };
+  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 90 };
 
   function normalizeProgress(value) {
     if (!Number.isFinite(value)) return 0;
@@ -33,6 +33,8 @@
     const depth = geometry.depth ?? DEFAULT_GEOMETRY.depth;
     const tiltY = geometry.tiltY ?? DEFAULT_GEOMETRY.tiltY;
     const angle = ((index / Math.max(count, 1)) + normalizeProgress(progress)) * Math.PI * 2;
+    const fullTurn = Math.PI * 2;
+    const frontOffset = ((angle - Math.PI / 2 + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
     const z = (Math.sin(angle) + 1) / 2;
     return {
       xPercent: Math.cos(angle) * radiusX,
@@ -40,7 +42,7 @@
       scale: 1 - depth + z * depth * 2,
       opacity: 0.44 + z * 0.56,
       rotationDeg: Math.cos(angle) * -3.5,
-      rotationYDeg: Math.cos(angle) * -tiltY,
+      rotationYDeg: (frontOffset / Math.PI) * tiltY,
       zIndex: Math.round(z * 100),
     };
   }
@@ -100,7 +102,7 @@
       const stageHeight = stage.clientHeight || 500;
       const compact = stageWidth < 640;
       const geometry = compact
-        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 70 }
+        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 90 }
         : DEFAULT_GEOMETRY;
 
       items.forEach((item, index) => {
