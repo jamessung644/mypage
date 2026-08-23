@@ -3,7 +3,7 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.GalleryWheel = api;
 })(typeof window !== 'undefined' ? window : globalThis, function buildGalleryWheelApi() {
-  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22 };
+  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 28 };
 
   function normalizeProgress(value) {
     if (!Number.isFinite(value)) return 0;
@@ -31,6 +31,7 @@
     const radiusX = geometry.radiusX ?? DEFAULT_GEOMETRY.radiusX;
     const radiusY = geometry.radiusY ?? DEFAULT_GEOMETRY.radiusY;
     const depth = geometry.depth ?? DEFAULT_GEOMETRY.depth;
+    const tiltY = geometry.tiltY ?? DEFAULT_GEOMETRY.tiltY;
     const angle = ((index / Math.max(count, 1)) + normalizeProgress(progress)) * Math.PI * 2;
     const z = (Math.sin(angle) + 1) / 2;
     return {
@@ -38,7 +39,8 @@
       yPercent: Math.sin(angle) * radiusY,
       scale: 1 - depth + z * depth * 2,
       opacity: 0.44 + z * 0.56,
-      rotationDeg: Math.cos(angle) * -8,
+      rotationDeg: Math.cos(angle) * -3.5,
+      rotationYDeg: Math.cos(angle) * -tiltY,
       zIndex: Math.round(z * 100),
     };
   }
@@ -98,7 +100,7 @@
       const stageHeight = stage.clientHeight || 500;
       const compact = stageWidth < 640;
       const geometry = compact
-        ? { radiusX: 36, radiusY: 19, depth: 0.16 }
+        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 22 }
         : DEFAULT_GEOMETRY;
 
       items.forEach((item, index) => {
@@ -108,6 +110,7 @@
         item.style.setProperty('--wheel-scale', frame.scale.toFixed(3));
         item.style.setProperty('--wheel-opacity', frame.opacity.toFixed(3));
         item.style.setProperty('--wheel-rotation', frame.rotationDeg.toFixed(2));
+        item.style.setProperty('--wheel-tilt-y', frame.rotationYDeg.toFixed(2));
         item.style.setProperty('--wheel-z', String(frame.zIndex));
       });
       slider.value = String(Math.round(progress * 1000));
@@ -220,7 +223,7 @@
       .then((loadedImages) => {
         images = loadedImages;
         renderItems();
-        if (status) status.textContent = `${images.length}개의 기록 · 커서를 올리면 잠시 멈춥니다.`;
+        if (status) status.textContent = `${images.length}개의 기록 · 커서를 올리면 멈추고, 클릭하면 원본을 엽니다.`;
         rootElement.classList.add('is-ready');
         rootElement.dispatchEvent(new CustomEvent('gallerywheel:ready', { detail: { count: images.length } }));
         animationFrame = requestAnimationFrame(tick);
@@ -256,4 +259,3 @@
     shouldAnimate,
   };
 });
-

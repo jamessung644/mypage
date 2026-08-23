@@ -34,6 +34,14 @@ test('calculateWheelFrame produces a bounded elliptical orbit and depth', () => 
   assert.ok(frame.opacity >= 0.45 && frame.opacity <= 1);
 });
 
+test('calculateWheelFrame turns side cards inward and faces the front card forward', () => {
+  const side = calculateWheelFrame(0, 4, 0);
+  const front = calculateWheelFrame(0, 4, 0.25);
+
+  assert.equal(side.rotationYDeg, -28);
+  assert.ok(Math.abs(front.rotationYDeg) < 0.001);
+});
+
 test('shouldAnimate requires multiple images and no pause reasons', () => {
   assert.equal(shouldAnimate(new Set(), false, 8), true);
   assert.equal(shouldAnimate(new Set(['hover']), false, 8), false);
@@ -41,4 +49,3 @@ test('shouldAnimate requires multiple images and no pause reasons', () => {
   assert.equal(shouldAnimate(new Set(), false, 1), false);
   assert.equal(shouldAnimate(new Set(), false, 0), false);
 });
-

@@ -106,6 +106,24 @@ const initial = await evaluate(`(() => ({
       mediaRadius: media ? parseFloat(getComputedStyle(media).borderTopLeftRadius) || 0 : 0,
     };
   })(),
+  braveTylenol: (() => {
+    const project = document.querySelector('[data-project-name="brave-tylenol"]');
+    const media = project?.querySelector('.project-showcase__media');
+    const image = media?.querySelector('img');
+    return {
+      imageSrc: image?.getAttribute('src') || '',
+      imageLoaded: Boolean(image?.complete && image.naturalWidth > 0),
+      mediaRadius: media ? parseFloat(getComputedStyle(media).borderTopLeftRadius) || 0 : 0,
+    };
+  })(),
+  signatureMk1: (() => {
+    const project = document.querySelector('[data-project-name="signature-mk1"]');
+    return {
+      isArchive: project?.classList.contains('project-archive__item') || false,
+      href: project?.getAttribute('href') || '',
+      hasImage: Boolean(project?.querySelector('img')),
+    };
+  })(),
   pillosufferSlides: document.querySelectorAll('[data-project-name="pillosuffer"] [data-project-slide]').length,
   pillosufferMainSrc: document.querySelector('[data-project-name="pillosuffer"] [data-project-slide] img')?.getAttribute('src') || '',
   pillosufferRadius: parseFloat(getComputedStyle(document.querySelector('[data-project-name="pillosuffer"] .project-showcase__media')).borderTopLeftRadius) || 0,
@@ -211,6 +229,17 @@ const droneLightbox = await evaluate(`(() => {
   return result;
 })()`);
 await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="brave-tylenol"]');
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 800));
+const braveTylenolPhotoLoaded = await evaluate(`(() => {
+  const image = document.querySelector('[data-project-name="brave-tylenol"] .project-showcase__media img');
+  return Boolean(image?.complete && image.naturalWidth > 0);
+})()`);
+await screenshot('portfolio-brave-tylenol-desktop-fixed.png');
+await evaluate(`(() => {
   const project = document.querySelector('[data-project-name="signature-mk1"]') || document.querySelectorAll('.project-showcase')[2];
   window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
   return true;
@@ -291,6 +320,18 @@ await evaluate(`(() => {
   return slider.value;
 })()`);
 const manualValue = await evaluate("Number(document.querySelector('[data-wheel-slider]').value)");
+const wheelPerspective = await evaluate(`(() => {
+  const stage = document.querySelector('[data-wheel-stage]');
+  const items = [...document.querySelectorAll('.image-wheel__item')];
+  const tilts = items.map((item) => Number(getComputedStyle(item).getPropertyValue('--wheel-tilt-y')) || 0);
+  const transforms = items.map((item) => getComputedStyle(item).transform);
+  return {
+    perspective: getComputedStyle(stage).perspective,
+    minimumTilt: Math.min(...tilts.map(Math.abs)),
+    maximumTilt: Math.max(...tilts.map(Math.abs)),
+    uses3dTransforms: transforms.some((transform) => transform.startsWith('matrix3d(')),
+  };
+})()`);
 await screenshot('portfolio-wheel-desktop-fixed.png');
 
 await evaluate("document.querySelector('.image-wheel__item').click(); true");
@@ -355,8 +396,8 @@ const checks = {
     && JSON.stringify(bloubPointerMotion.rest) !== JSON.stringify(bloubPointerMotion.farRight),
   bloubStaysCenteredOnMobile: mobileBloubGaze.mounted
     && JSON.stringify(mobileBloubGaze.before) === JSON.stringify(mobileBloubGaze.after),
-  fiveProjectShowcases: initial.projectShowcases === 5,
-  oneProjectArchiveItem: initial.projectArchiveItems === 1,
+  fourProjectShowcases: initial.projectShowcases === 4,
+  twoProjectArchiveItems: initial.projectArchiveItems === 2,
   requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
   awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상', 'drone:최우수상', 'pillosuffer:우수상 · 장려상']),
   awardBadgesAreCompact: initial.projectAwardHeights.length === 3 && Math.max(...initial.projectAwardHeights) <= 36,
@@ -370,6 +411,8 @@ const checks = {
   droneSliderAdvances: droneSlider.activeIndex === 1 && droneSlider.counter === '2 / 3',
   dronePhotoExpands: droneLightbox.open && /drone-award-2024\.webp$/.test(droneLightbox.src),
   codeBuddyUsesGithubIconCard: initial.codeBuddy.isShowcase && initial.codeBuddy.iconSrc === 'Img/codebuddy_icon.png' && codeBuddyIconLoaded && initial.codeBuddy.iconWidth >= 96 && initial.codeBuddy.mediaRadius >= 24,
+  braveTylenolUsesRequestedPhoto: initial.braveTylenol.imageSrc === 'Img/projects/brave-tylenol-team.webp' && braveTylenolPhotoLoaded && initial.braveTylenol.mediaRadius >= 24,
+  signatureMk1MatchesPillGoodArchive: initial.signatureMk1.isArchive && /Signiture-MK1/.test(initial.signatureMk1.href) && !initial.signatureMk1.hasImage,
   pillosufferHasThreeSlides: initial.pillosufferSlides === 3,
   pillosufferAppIsMain: initial.pillosufferMainSrc === 'Img/projects/pillosuffer-app-home.webp',
   pillosufferUsesAppleRounding: initial.pillosufferRadius >= 24,
@@ -383,12 +426,13 @@ const checks = {
   noBrokenImages: initial.brokenImages.length === 0,
   hoverPauses: beforePause === afterPause,
   manualSlider: manualValue === 500,
-  lightboxOpens: lightbox.open && /^Img\//.test(lightbox.src),
+  wheelUsesPerspectiveTilt: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 6 && wheelPerspective.maximumTilt >= 20 && wheelPerspective.uses3dTransforms,
+  lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/1.jpg',
   noMobileOverflow: mobile.bodyWidth === mobile.viewportWidth,
   legacyGridHidden: mobile.legacyDisplay === 'none',
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, braveTylenolPhotoLoaded, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, wheelPerspective, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;

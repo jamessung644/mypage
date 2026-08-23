@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- 외부 CSS 파일 연결 -->
   <link rel="stylesheet" href="style.css?v=4" />
-  <link rel="stylesheet" href="redesign.css?v=1" />
+  <link rel="stylesheet" href="redesign.css?v=20260823-1830" />
 </head>
 
 <body class="portfolio-redesign">
@@ -534,17 +534,9 @@
           </article>
 
           <article class="project-showcase project-showcase--reverse reveal" data-project-focus data-project-name="brave-tylenol">
-            <div class="project-showcase__media project-showcase__media--terminal" aria-label="Brave Tylenol 서버 평가 결과">
-              <div class="proof-terminal">
-                <div class="proof-terminal__bar"><span></span><span></span><span></span><b>healthbench / live evaluation</b></div>
-                <div class="proof-terminal__body">
-                  <p><span>$</span> python main.py serve</p>
-                  <p class="is-ok">✓ Lunit L2 connected</p>
-                  <p class="is-ok">✓ 16 / 16 concurrent requests</p>
-                  <p><span>score</span> 49.80</p>
-                  <div class="proof-terminal__meter"><i></i></div>
-                </div>
-              </div>
+            <div class="project-showcase__media project-showcase__media--brave">
+              <img src="Img/projects/brave-tylenol-team.webp" alt="Brave Tylenol 팀이 Lunit 행사장에서 파란 조형물과 함께 촬영한 사진" width="1620" height="2160" loading="lazy" decoding="async" />
+              <span class="project-showcase__caption">BRAVE TYLENOL · LUNIT L2</span>
             </div>
             <div class="project-showcase__content">
               <div class="project-showcase__meta"><span>03</span><span>Medical AI · 2026</span></div>
@@ -577,26 +569,9 @@
             </div>
           </article>
 
-          <article class="project-showcase reveal" data-project-focus data-project-name="signature-mk1">
-            <div class="project-showcase__media">
-              <img src="Img/projects/signature-mk1.webp" alt="카메라로 손동작을 인식해 로봇 손을 제어하는 Signature MK1 실험 장면" width="1080" height="608" loading="lazy" decoding="async" />
-              <span class="project-showcase__caption">WORKING PROTOTYPE · CAMERA TO SERVO</span>
-            </div>
-            <div class="project-showcase__content">
-              <div class="project-showcase__meta"><span>05</span><span>Physical Computing · 2023</span></div>
-              <h3>Signature MK1</h3>
-              <p class="lang-ko">MediaPipe로 손 모양을 실시간 인식하고, 인식 결과를 Arduino로 전달해 직접 제작한 로봇 손을 구동했습니다.</p>
-              <p class="lang-en">Recognizes hand gestures with MediaPipe and sends them to Arduino to drive a hand-built robotic hand in real time.</p>
-              <dl class="project-showcase__facts">
-                <div><dt>Input</dt><dd>Vision</dd></div>
-                <div><dt>Output</dt><dd>5 Servos</dd></div>
-              </dl>
-              <div class="project-showcase__links">
-                <a class="project-showcase__link" href="https://github.com/jamessung644/Signiture-MK1" target="_blank" rel="noreferrer">Repository <span>↗</span></a>
-                <a class="project-showcase__link" href="https://youtu.be/KIa77oBFC2w" target="_blank" rel="noreferrer">Demo <span>↗</span></a>
-              </div>
-            </div>
-          </article>
+          <a class="project-archive__item reveal" data-project-name="signature-mk1" href="https://github.com/jamessung644/Signiture-MK1" target="_blank" rel="noreferrer">
+            <span>05</span><strong>Signature MK1</strong><em>MediaPipe · Arduino · Robotics</em><b>Gesture-controlled hand ↗</b>
+          </a>
 
           <a class="project-archive__item reveal" data-project-name="pill-good" href="https://github.com/jamessung644/Pill-Good" target="_blank" rel="noreferrer">
             <span>06</span><strong>Pill Good</strong><em>Swift · Arduino · IoT</em><b>Smart dispenser ↗</b>
@@ -1360,7 +1335,7 @@
   <!-- 외부 JavaScript 파일 연결 -->
   <script src="script.js"></script>
   <script src="project-slider.js"></script>
-  <script src="gallery-wheel.js"></script>
+  <script src="gallery-wheel.js?v=20260823-1830"></script>
   <script src="bloub-gaze.js?v=20260823-1745"></script>
   <script src="bloub.js?v=20260823-1745"></script>
 </body>

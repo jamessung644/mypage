@@ -432,6 +432,16 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
 }
 .project-showcase:hover .project-showcase__media--codebuddy > img { transform: translateY(-3px) scale(1.025); }
 
+/* Brave Tylenol team portrait */
+.project-showcase__media--brave {
+  min-height: 500px;
+  margin: clamp(.8rem, 1.6vw, 1.4rem);
+  border-radius: 30px;
+  background: #171a18;
+  box-shadow: 0 24px 60px rgba(30, 24, 22, .16), inset 0 0 0 1px rgba(255, 255, 255, .08);
+}
+.project-showcase__media--brave > img { object-position: center 51%; }
+
 /* PilloSuffer award album */
 .project-showcase--pillosuffer { grid-template-columns: minmax(0, 1.08fr) minmax(350px, .92fr); }
 .project-showcase__media--slider {
@@ -654,6 +664,8 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   cursor: grab;
   touch-action: pan-y;
   user-select: none;
+  perspective: 1150px;
+  perspective-origin: 50% 47%;
 }
 .image-wheel__stage:active { cursor: grabbing; }
 .image-wheel__fallback { position: absolute; inset: 0; display: grid; place-items: center; }
@@ -664,6 +676,7 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   --wheel-scale: 1;
   --wheel-opacity: 1;
   --wheel-rotation: 0;
+  --wheel-tilt-y: 0;
   --wheel-z: 1;
   position: absolute;
   left: 50%;
@@ -678,7 +691,9 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   box-shadow: 0 20px 44px rgba(55, 48, 39, .18);
   opacity: var(--wheel-opacity);
   z-index: var(--wheel-z);
-  transform: translate(-50%, -50%) translate3d(var(--wheel-x), var(--wheel-y), 0) rotate(calc(var(--wheel-rotation) * 1deg)) scale(var(--wheel-scale));
+  transform: translate(-50%, -50%) translate3d(var(--wheel-x), var(--wheel-y), 0) rotateY(calc(var(--wheel-tilt-y) * 1deg)) rotateZ(calc(var(--wheel-rotation) * 1deg)) scale(var(--wheel-scale));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
   transition: box-shadow .2s ease;
   will-change: transform, opacity;
   cursor: zoom-in;
@@ -745,6 +760,7 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   .project-showcase__media--portrait { aspect-ratio: 4 / 3; }
   .project-showcase__media--slider { min-height: 0; margin: .75rem; border-radius: 24px; aspect-ratio: 4 / 5; }
   .project-showcase__media--codebuddy { min-height: 0; margin: .75rem; border-radius: 24px; aspect-ratio: 4 / 3; }
+  .project-showcase__media--brave { min-height: 0; margin: .75rem; border-radius: 24px; aspect-ratio: 4 / 5; }
   .project-showcase__media--codebuddy > img,
   .project-showcase:hover .project-showcase__media--codebuddy > img { width: clamp(112px, 34vw, 150px); }
   .project-slider { min-height: 0; }
