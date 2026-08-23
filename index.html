@@ -454,40 +454,14 @@
           </p>
         </div>
 
-        <div class="project-showcase-list">
-          <article class="project-showcase reveal" data-project-focus>
-            <div class="project-showcase__media project-showcase__media--terminal" aria-label="Brave Tylenol 서버 평가 결과">
-              <div class="proof-terminal">
-                <div class="proof-terminal__bar"><span></span><span></span><span></span><b>healthbench / live evaluation</b></div>
-                <div class="proof-terminal__body">
-                  <p><span>$</span> python main.py serve</p>
-                  <p class="is-ok">✓ Lunit L2 connected</p>
-                  <p class="is-ok">✓ 16 / 16 concurrent requests</p>
-                  <p><span>score</span> 49.80</p>
-                  <div class="proof-terminal__meter"><i></i></div>
-                </div>
-              </div>
-            </div>
-            <div class="project-showcase__content">
-              <div class="project-showcase__meta"><span>01</span><span>Medical AI · 2026</span></div>
-              <h3>Brave Tylenol</h3>
-              <p class="lang-ko">Lunit L2와 의료 안전 프롬프트를 결합한 멀티턴 건강관리 서버입니다. 평가 환경에서 전체 대화를 보존하며 안정적인 동시 요청 처리를 검증했습니다.</p>
-              <p class="lang-en">A multi-turn healthcare server built on Lunit L2, preserving complete conversation context while enforcing medical-safety constraints.</p>
-              <dl class="project-showcase__facts">
-                <div><dt>HealthBench</dt><dd>49.80</dd></div>
-                <div><dt>Concurrency</dt><dd>16/16</dd></div>
-              </dl>
-              <a class="project-showcase__link" href="https://github.com/jamessung644/BraveTylenol" target="_blank" rel="noreferrer">View repository <span>↗</span></a>
-            </div>
-          </article>
-
-          <article class="project-showcase project-showcase--reverse reveal" data-project-focus>
+        <div class="project-sequence">
+          <article class="project-showcase project-showcase--reverse reveal" data-project-focus data-project-name="drone">
             <div class="project-showcase__media">
               <img src="Img/projects/drone-crowd.webp" alt="드론 영상에서 군중을 실시간 탐지하는 시스템 실행 화면" width="1200" height="780" loading="lazy" decoding="async" />
               <span class="project-showcase__caption">LIVE INFERENCE · YOLOv8 + HOMOGRAPHY</span>
             </div>
             <div class="project-showcase__content">
-              <div class="project-showcase__meta"><span>02</span><span>Computer Vision · 2024</span></div>
+              <div class="project-showcase__meta"><span>01</span><span>Computer Vision · 2024</span></div>
               <h3><span class="lang-ko">실시간 군중밀도 모니터링</span><span class="lang-en">Live crowd intelligence</span></h3>
               <p class="lang-ko">드론 시점의 왜곡을 Homography로 보정하고 YOLOv8 탐지 결과를 실제 혼잡도와 관광 추천 서비스로 연결했습니다.</p>
               <p class="lang-en">Corrects drone perspective with homography and turns YOLOv8 detections into live crowd density and tourism recommendations.</p>
@@ -502,7 +476,11 @@
             </div>
           </article>
 
-          <article class="project-showcase reveal" data-project-focus>
+          <a class="project-archive__item reveal" data-project-name="pill-good" href="https://github.com/jamessung644/Pill-Good" target="_blank" rel="noreferrer">
+            <span>02</span><strong>Pill Good</strong><em>Swift · Arduino · IoT</em><b>Smart dispenser ↗</b>
+          </a>
+
+          <article class="project-showcase reveal" data-project-focus data-project-name="signature-mk1">
             <div class="project-showcase__media">
               <img src="Img/projects/signature-mk1.webp" alt="카메라로 손동작을 인식해 로봇 손을 제어하는 Signature MK1 실험 장면" width="1080" height="608" loading="lazy" decoding="async" />
               <span class="project-showcase__caption">WORKING PROTOTYPE · CAMERA TO SERVO</span>
@@ -523,13 +501,17 @@
             </div>
           </article>
 
-          <article class="project-showcase project-showcase--reverse reveal" data-project-focus>
+          <a class="project-archive__item reveal" data-project-name="code-buddy" href="https://github.com/jamessung644/codebuddy" target="_blank" rel="noreferrer">
+            <span>04</span><strong>Code Buddy</strong><em>Electron · Multi-AI</em><b>Desktop companion ↗</b>
+          </a>
+
+          <article class="project-showcase project-showcase--reverse reveal" data-project-focus data-project-name="pillosuffer">
             <div class="project-showcase__media project-showcase__media--portrait">
               <img src="Img/projects/pillosuffer-award.webp" alt="PilloSuffer 프로젝트 우수상 수상 기록" width="880" height="1100" loading="lazy" decoding="async" />
               <span class="project-showcase__caption">X+AI·SW · EXCELLENCE AWARD</span>
             </div>
             <div class="project-showcase__content">
-              <div class="project-showcase__meta"><span>04</span><span>Health AI · 2026</span></div>
+              <div class="project-showcase__meta"><span>05</span><span>Health AI · 2026</span></div>
               <h3>PilloSuffer</h3>
               <p class="lang-ko">약봉투 OCR과 근거 기반 RAG를 결합해 약과 음식·영양제의 상호작용을 쉬운 언어로 설명하는 복약 안전 서비스입니다.</p>
               <p class="lang-en">A medication-safety service combining prescription OCR with evidence-grounded RAG for drug, food and supplement interactions.</p>
@@ -540,19 +522,36 @@
               <a class="project-showcase__link" href="https://github.com/jamessung644/Pillosuffer" target="_blank" rel="noreferrer">View case study <span>↗</span></a>
             </div>
           </article>
-        </div>
 
-        <div class="project-archive reveal">
-          <div class="project-archive__heading"><span>More builds</span><span>Small systems, shipped experiments</span></div>
-          <a class="project-archive__item" href="https://github.com/jamessung644/Pill-Good" target="_blank" rel="noreferrer">
-            <span>05</span><strong>Pill Good</strong><em>Swift · Arduino · IoT</em><b>Smart dispenser ↗</b>
-          </a>
-          <a class="project-archive__item" href="https://github.com/jamessung644/codebuddy" target="_blank" rel="noreferrer">
-            <span>06</span><strong>Code Buddy</strong><em>Electron · Multi-AI</em><b>Desktop companion ↗</b>
-          </a>
-          <div class="project-archive__item">
-            <span>07</span><strong>Eyes-Road</strong><em>YOLOv8 · GIS · PAI</em><b>Accessibility platform</b>
+          <div class="project-archive__item reveal" data-project-name="eyes-road">
+            <span>06</span><strong>Eyes-Road</strong><em>YOLOv8 · GIS · PAI</em><b>Accessibility platform</b>
           </div>
+
+          <article class="project-showcase reveal" data-project-focus data-project-name="brave-tylenol">
+            <div class="project-showcase__media project-showcase__media--terminal" aria-label="Brave Tylenol 서버 평가 결과">
+              <div class="proof-terminal">
+                <div class="proof-terminal__bar"><span></span><span></span><span></span><b>healthbench / live evaluation</b></div>
+                <div class="proof-terminal__body">
+                  <p><span>$</span> python main.py serve</p>
+                  <p class="is-ok">✓ Lunit L2 connected</p>
+                  <p class="is-ok">✓ 16 / 16 concurrent requests</p>
+                  <p><span>score</span> 49.80</p>
+                  <div class="proof-terminal__meter"><i></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="project-showcase__content">
+              <div class="project-showcase__meta"><span>07</span><span>Medical AI · 2026</span></div>
+              <h3>Brave Tylenol</h3>
+              <p class="lang-ko">Lunit L2와 의료 안전 프롬프트를 결합한 멀티턴 건강관리 서버입니다. 평가 환경에서 전체 대화를 보존하며 안정적인 동시 요청 처리를 검증했습니다.</p>
+              <p class="lang-en">A multi-turn healthcare server built on Lunit L2, preserving complete conversation context while enforcing medical-safety constraints.</p>
+              <dl class="project-showcase__facts">
+                <div><dt>HealthBench</dt><dd>49.80</dd></div>
+                <div><dt>Concurrency</dt><dd>16/16</dd></div>
+              </dl>
+              <a class="project-showcase__link" href="https://github.com/jamessung644/BraveTylenol" target="_blank" rel="noreferrer">View repository <span>↗</span></a>
+            </div>
+          </article>
         </div>
 
         <div class="projects__grid projects__grid--legacy-v1" hidden aria-hidden="true">

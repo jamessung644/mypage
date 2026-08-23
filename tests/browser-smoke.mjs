@@ -49,7 +49,8 @@ async function waitFor(expression, timeout = 5000) {
 
 async function navigate(width, height) {
   await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
-  await call('Page.navigate', { url: previewUrl });
+  const separator = previewUrl.includes('?') ? '&' : '?';
+  await call('Page.navigate', { url: `${previewUrl}${separator}browser_smoke=${Date.now()}` });
   await waitFor("document.readyState === 'complete' && document.querySelectorAll('.image-wheel__item').length === 15");
   await new Promise((resolve) => setTimeout(resolve, 500));
 }
@@ -70,6 +71,7 @@ const initial = await evaluate(`(() => ({
   bloubSource: document.querySelector('[data-original-bloub]')?.getAttribute('src') || '',
   projectShowcases: document.querySelectorAll('.project-showcase').length,
   projectArchiveItems: document.querySelectorAll('.project-archive__item').length,
+  projectOrder: [...document.querySelectorAll('.project-sequence [data-project-name]')].map((project) => project.dataset.projectName),
   maskProjectPresent: document.body.textContent.includes('Mask R-CNN Reproduction'),
   brokenProjectMedia: [...document.querySelectorAll('.project-showcase__media img')].filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.currentSrc),
   bodyWidth: document.body.scrollWidth,
@@ -88,7 +90,7 @@ await evaluate(`(() => {
 await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-desktop-fixed.png');
 await evaluate(`(() => {
-  const project = document.querySelectorAll('.project-showcase')[1];
+  const project = document.querySelector('[data-project-name="signature-mk1"]') || document.querySelectorAll('.project-showcase')[2];
   window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
   return true;
 })()`);
@@ -139,7 +141,7 @@ const mobile = await evaluate(`(() => ({
 await screenshot('portfolio-hero-mobile-fixed.png');
 await evaluate(`(() => {
   document.documentElement.style.scrollBehavior = 'auto';
-  const project = document.querySelector('.project-showcase');
+  const project = document.querySelector('[data-project-name="drone"]') || document.querySelectorAll('.project-showcase')[1];
   window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 72);
   return true;
 })()`);
@@ -159,6 +161,7 @@ const checks = {
   usesOriginalBloubSvg: initial.bloubSource === 'Img/bloub-squircle-excite-rouge-anime.svg',
   fourProjectShowcases: initial.projectShowcases === 4,
   threeProjectArchiveItems: initial.projectArchiveItems === 3,
+  originalProjectOrderPreserved: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pill-good', 'signature-mk1', 'code-buddy', 'pillosuffer', 'eyes-road', 'brave-tylenol']),
   maskProjectRemoved: initial.maskProjectPresent === false,
   projectMediaLoads: initial.brokenProjectMedia.length === 0,
   noDesktopOverflow: initial.bodyWidth <= initial.viewportWidth,
