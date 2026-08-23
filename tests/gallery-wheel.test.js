@@ -3,8 +3,10 @@ const assert = require('node:assert/strict');
 
 const {
   calculateWheelFrame,
+  normalizeLocalFallback,
   normalizeManifest,
   normalizeProgress,
+  resolvePointerRelease,
   shouldAnimate,
 } = require('../gallery-wheel.js');
 
@@ -24,6 +26,36 @@ test('normalizeManifest keeps renderable images and sorts newest first', () => {
   });
 
   assert.deepEqual(images.map((image) => image.id), ['new', 'old']);
+});
+
+test('normalizeLocalFallback builds thumbnail records when fetch is unavailable', () => {
+  const images = normalizeLocalFallback?.([
+    { large: 'Img/1.jpg', alt: '첫 번째 기록' },
+    { large: 'Img/2.jpg', alt: '두 번째 기록' },
+  ]);
+
+  assert.deepEqual(images, [
+    {
+      id: 'local-photo-01',
+      thumb: 'Img/gallery/1.webp',
+      large: 'Img/1.jpg',
+      alt: '첫 번째 기록',
+      caption: '첫 번째 기록',
+      uploaded: '',
+      width: 800,
+      height: 600,
+    },
+    {
+      id: 'local-photo-02',
+      thumb: 'Img/gallery/2.webp',
+      large: 'Img/2.jpg',
+      alt: '두 번째 기록',
+      caption: '두 번째 기록',
+      uploaded: '',
+      width: 800,
+      height: 600,
+    },
+  ]);
 });
 
 test('calculateWheelFrame produces a bounded elliptical orbit and depth', () => {
@@ -49,10 +81,30 @@ test('calculateWheelFrame turns continuously from the front to a 90 degree back 
   assert.equal(Math.abs(back.rotationYDeg), 90);
 });
 
+test('calculateWheelFrame crossfades adjacent cards at the front handoff', () => {
+  const count = 15;
+  const handoffProgress = 0.25 + 1 / (count * 2);
+  const outgoing = calculateWheelFrame(0, count, handoffProgress);
+  const incoming = calculateWheelFrame(count - 1, count, handoffProgress);
+  const centered = calculateWheelFrame(0, count, 0.25);
+
+  assert.ok(centered.opacity > 0.99);
+  assert.ok(outgoing.opacity >= 0.55 && outgoing.opacity <= 0.62);
+  assert.ok(incoming.opacity >= 0.55 && incoming.opacity <= 0.62);
+  assert.ok(Math.abs(outgoing.opacity - incoming.opacity) < 0.001);
+});
+
 test('shouldAnimate requires multiple images and no pause reasons', () => {
   assert.equal(shouldAnimate(new Set(), false, 8), true);
   assert.equal(shouldAnimate(new Set(['hover']), false, 8), false);
   assert.equal(shouldAnimate(new Set(), true, 8), false);
   assert.equal(shouldAnimate(new Set(), false, 1), false);
   assert.equal(shouldAnimate(new Set(), false, 0), false);
+});
+
+test('resolvePointerRelease opens a stationary card but not a drag', () => {
+  assert.equal(resolvePointerRelease?.({ moved: false, imageIndex: 4 }), 4);
+  assert.equal(resolvePointerRelease?.({ moved: true, imageIndex: 4 }), -1);
+  assert.equal(resolvePointerRelease?.({ moved: false, imageIndex: -1 }), -1);
+  assert.equal(resolvePointerRelease?.(null), -1);
 });

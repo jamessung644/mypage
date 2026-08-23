@@ -307,19 +307,19 @@ const stageCenter = await evaluate(`(() => {
   const rect = document.querySelector('[data-wheel-stage]').getBoundingClientRect();
   return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
 })()`);
-await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x, y: stageCenter.y });
-const beforePause = await evaluate("Number(document.querySelector('[data-wheel-slider]').value)");
-await new Promise((resolve) => setTimeout(resolve, 350));
-const afterPause = await evaluate("Number(document.querySelector('[data-wheel-slider]').value)");
-
-await evaluate(`(() => {
-  const slider = document.querySelector('[data-wheel-slider]');
-  slider.value = '500';
-  slider.dispatchEvent(new Event('input', { bubbles: true }));
-  slider.dispatchEvent(new Event('change', { bubbles: true }));
-  return slider.value;
+const stageEmptyPoint = await evaluate(`(() => {
+  const rect = document.querySelector('[data-wheel-stage]').getBoundingClientRect();
+  return { x: rect.left + 8, y: rect.top + 8 };
 })()`);
-const manualValue = await evaluate("Number(document.querySelector('[data-wheel-slider]').value)");
+await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageEmptyPoint.x, y: stageEmptyPoint.y });
+const beforeEmptyHover = await evaluate("getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x')");
+await new Promise((resolve) => setTimeout(resolve, 350));
+const afterEmptyHover = await evaluate("getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x')");
+await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x, y: stageCenter.y });
+const beforePause = await evaluate("getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x')");
+await new Promise((resolve) => setTimeout(resolve, 350));
+const afterPause = await evaluate("getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x')");
+const wheelScrubberRemoved = await evaluate("document.querySelector('[data-wheel-slider]') === null");
 const wheelPerspective = await evaluate(`(() => {
   const stage = document.querySelector('[data-wheel-stage]');
   const items = [...document.querySelectorAll('.image-wheel__item')];
@@ -366,12 +366,13 @@ await evaluate("window.portfolioLightbox.close(); true");
 
 await evaluate("window.__wheelPointerCaptures = 0; true");
 await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x, y: stageCenter.y });
+const beforeWheelDrag = await evaluate("getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x')");
 await call('Input.dispatchMouseEvent', { type: 'mousePressed', x: stageCenter.x, y: stageCenter.y, button: 'left', clickCount: 1 });
 await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x - 120, y: stageCenter.y, button: 'left', buttons: 1 });
 await call('Input.dispatchMouseEvent', { type: 'mouseReleased', x: stageCenter.x - 120, y: stageCenter.y, button: 'left', clickCount: 1 });
 await new Promise((resolve) => setTimeout(resolve, 120));
 const wheelDrag = await evaluate(`(() => ({
-  value: Number(document.querySelector('[data-wheel-slider]').value),
+  frame: getComputedStyle(document.querySelector('.image-wheel__item')).getPropertyValue('--wheel-x'),
   pointerCaptures: window.__wheelPointerCaptures,
   lightboxOpen: document.getElementById('lightbox').classList.contains('open'),
 }))()`);
@@ -457,17 +458,18 @@ const checks = {
   noDesktopOverflow: initial.bodyWidth <= initial.viewportWidth,
   originalsDeferred: initial.originalsLoaded.length === 0,
   noBrokenImages: initial.brokenImages.length === 0,
-  hoverPauses: beforePause === afterPause,
-  manualSlider: manualValue === 500,
+  emptyWheelAreaKeepsRotating: beforeEmptyHover !== afterEmptyHover,
+  hoverPausesOnlyOnPhoto: beforePause === afterPause,
+  wheelScrubberRemoved,
   wheelTurnsBackCardsUpTo90Degrees: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 10 && wheelPerspective.maximumTilt >= 85 && wheelPerspective.maximumTilt <= 90.5 && wheelPerspective.backCardTilt >= 85 && wheelPerspective.maximumRotation <= 3.6 && wheelPerspective.hasFrontFacingCard && wheelPerspective.cardAspectRatio < 0.8 && wheelPerspective.uses3dTransforms,
   lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/12.jpeg',
   wheelClickDoesNotCapturePointer: lightbox.pointerCaptures === 0,
-  wheelDragStillRotates: wheelDrag.value !== 500 && wheelDrag.pointerCaptures >= 1 && wheelDrag.lightboxOpen === false,
+  wheelDragStillRotates: wheelDrag.frame !== beforeWheelDrag && wheelDrag.pointerCaptures >= 1 && wheelDrag.lightboxOpen === false,
   noMobileOverflow: mobile.bodyWidth === mobile.viewportWidth,
   legacyGridHidden: mobile.legacyDisplay === 'none',
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, braveTylenolPhotoLoaded, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, wheelPerspective, lightbox, wheelDrag, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, braveTylenolPhotoLoaded, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforeEmptyHover, afterEmptyHover, beforePause, afterPause, wheelPerspective, lightbox, wheelDrag, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;

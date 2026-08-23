@@ -27,6 +27,26 @@
       .sort((a, b) => Date.parse(b.uploaded || 0) - Date.parse(a.uploaded || 0));
   }
 
+  function normalizeLocalFallback(entries) {
+    if (!Array.isArray(entries)) return [];
+    return entries
+      .filter((entry) => entry && entry.large)
+      .map((entry, index) => {
+        const number = index + 1;
+        const alt = String(entry.alt || `사진 기록 ${number}`);
+        return {
+          id: `local-photo-${String(number).padStart(2, '0')}`,
+          thumb: `Img/gallery/${number}.webp`,
+          large: String(entry.large),
+          alt,
+          caption: alt,
+          uploaded: '',
+          width: Number(entry.width) || 800,
+          height: Number(entry.height) || 600,
+        };
+      });
+  }
+
   function calculateWheelFrame(index, count, progress, geometry = {}) {
     const radiusX = geometry.radiusX ?? DEFAULT_GEOMETRY.radiusX;
     const radiusY = geometry.radiusY ?? DEFAULT_GEOMETRY.radiusY;
@@ -36,11 +56,18 @@
     const fullTurn = Math.PI * 2;
     const frontOffset = ((angle - Math.PI / 2 + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
     const z = (Math.sin(angle) + 1) / 2;
+    const itemStep = fullTurn / Math.max(count, 1);
+    const handoffDistance = itemStep / 2;
+    const normalizedFrontDistance = Math.min(Math.abs(frontOffset) / handoffDistance, 1);
+    const frontFocus = 1 - normalizedFrontDistance;
+    const easedFrontFocus = frontFocus * frontFocus * (3 - 2 * frontFocus);
+    const depthOpacity = 0.44 + z * 0.56;
+    const handoffOpacity = 0.58 + easedFrontFocus * 0.42;
     return {
       xPercent: Math.cos(angle) * radiusX,
       yPercent: Math.sin(angle) * radiusY,
       scale: 1 - depth + z * depth * 2,
-      opacity: 0.44 + z * 0.56,
+      opacity: Math.min(depthOpacity, handoffOpacity),
       rotationDeg: Math.cos(angle) * -3.5,
       rotationYDeg: (frontOffset / Math.PI) * tiltY,
       zIndex: Math.round(z * 100),
@@ -51,6 +78,11 @@
     return !reducedMotion && itemCount > 1 && pauses.size === 0;
   }
 
+  function resolvePointerRelease(dragState) {
+    if (!dragState || dragState.moved || !Number.isInteger(dragState.imageIndex)) return -1;
+    return dragState.imageIndex >= 0 ? dragState.imageIndex : -1;
+  }
+
   async function fetchManifest(url) {
     if (!url) return [];
     const response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -58,7 +90,7 @@
     return normalizeManifest(await response.json());
   }
 
-  async function loadImages(remoteUrl, fallbackUrl) {
+  async function loadImages(remoteUrl, fallbackUrl, localFallback = []) {
     if (remoteUrl) {
       try {
         const remote = await fetchManifest(remoteUrl);
@@ -67,19 +99,35 @@
         console.warn('Remote gallery unavailable; using local images.', error);
       }
     }
-    return fetchManifest(fallbackUrl);
+    try {
+      const fallback = await fetchManifest(fallbackUrl);
+      if (fallback.length) return fallback;
+    } catch (error) {
+      console.warn('Gallery manifest unavailable; using embedded local images.', error);
+    }
+    return localFallback;
   }
 
   function mount(rootElement, options = {}) {
     if (!rootElement || typeof document === 'undefined') return Promise.resolve(null);
 
     const stage = rootElement.querySelector('[data-wheel-stage]');
-    const slider = rootElement.querySelector('[data-wheel-slider]');
     const status = rootElement.querySelector('[data-wheel-status]');
-    if (!stage || !slider) return Promise.resolve(null);
+    if (!stage) return Promise.resolve(null);
 
     const remoteUrl = options.remoteUrl ?? rootElement.dataset.remoteUrl ?? '';
     const fallbackUrl = options.fallbackUrl ?? rootElement.dataset.fallbackUrl ?? 'gallery.json';
+    const localFallback = normalizeLocalFallback(
+      Array.from(document.querySelectorAll('.gallery-grid--legacy .gallery-item[data-src]'), (item) => {
+        const image = item.querySelector('img');
+        return {
+          large: item.getAttribute('data-src'),
+          alt: image?.alt || '',
+          width: Number(image?.getAttribute('width')) || 800,
+          height: Number(image?.getAttribute('height')) || 600,
+        };
+      })
+    );
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const pauses = new Set();
     let images = [];
@@ -89,7 +137,6 @@
     let animationFrame = 0;
     let dragging = null;
     let suppressClick = false;
-    let manualTimer = 0;
 
     const setPause = (reason, paused) => {
       if (paused) pauses.add(reason);
@@ -115,7 +162,6 @@
         item.style.setProperty('--wheel-tilt-y', frame.rotationYDeg.toFixed(2));
         item.style.setProperty('--wheel-z', String(frame.zIndex));
       });
-      slider.value = String(Math.round(progress * 1000));
     };
 
     const tick = (time) => {
@@ -165,8 +211,21 @@
       render();
     };
 
-    stage.addEventListener('mouseenter', () => setPause('hover', true));
-    stage.addEventListener('mouseleave', () => setPause('hover', false));
+    const closestWheelItem = (target) => target instanceof Element
+      ? target.closest('.image-wheel__item')
+      : null;
+
+    stage.addEventListener('pointerover', (event) => {
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      const item = closestWheelItem(event.target);
+      if (item && stage.contains(item)) setPause('hover', true);
+    });
+    stage.addEventListener('pointerout', (event) => {
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      const fromItem = closestWheelItem(event.target);
+      const toItem = closestWheelItem(event.relatedTarget);
+      if (fromItem && (!toItem || !stage.contains(toItem))) setPause('hover', false);
+    });
     stage.addEventListener('focusin', () => setPause('focus', true));
     stage.addEventListener('focusout', (event) => {
       if (!stage.contains(event.relatedTarget)) setPause('focus', false);
@@ -174,7 +233,16 @@
 
     stage.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
-      dragging = { id: event.pointerId, startX: event.clientX, startProgress: progress, moved: false };
+      const trigger = closestWheelItem(event.target);
+      const imageIndex = trigger ? Number(trigger.dataset.imageIndex) : -1;
+      dragging = {
+        id: event.pointerId,
+        startX: event.clientX,
+        startProgress: progress,
+        moved: false,
+        imageIndex: Number.isInteger(imageIndex) ? imageIndex : -1,
+        trigger,
+      };
       setPause('drag', true);
     });
     stage.addEventListener('pointermove', (event) => {
@@ -189,22 +257,22 @@
     });
     const endDrag = (event) => {
       if (!dragging || dragging.id !== event.pointerId) return;
+      const releasedImageIndex = event.type === 'pointerup' ? resolvePointerRelease(dragging) : -1;
+      const trigger = dragging.trigger;
+      const moved = dragging.moved;
       if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
       dragging = null;
       setPause('drag', false);
-      window.setTimeout(() => { suppressClick = false; }, 0);
+      if (releasedImageIndex >= 0 && images[releasedImageIndex]) {
+        suppressClick = true;
+        openImage(images[releasedImageIndex], trigger);
+      }
+      if (moved || releasedImageIndex >= 0) {
+        window.setTimeout(() => { suppressClick = false; }, 0);
+      }
     };
     stage.addEventListener('pointerup', endDrag);
     stage.addEventListener('pointercancel', endDrag);
-
-    slider.addEventListener('input', () => {
-      window.clearTimeout(manualTimer);
-      setPause('manual', true);
-      render(Number(slider.value) / 1000);
-    });
-    slider.addEventListener('change', () => {
-      manualTimer = window.setTimeout(() => setPause('manual', false), 1200);
-    });
 
     const updateReducedMotion = () => setPause('reduced-motion', reducedMotionQuery.matches);
     updateReducedMotion();
@@ -221,11 +289,11 @@
       }).observe(rootElement);
     }
 
-    return loadImages(remoteUrl, fallbackUrl)
+    return loadImages(remoteUrl, fallbackUrl, localFallback)
       .then((loadedImages) => {
         images = loadedImages;
         renderItems();
-        if (status) status.textContent = `${images.length}개의 기록 · 커서를 올리면 멈추고, 클릭하면 원본을 엽니다.`;
+        if (status) status.textContent = `${images.length}개의 기록 · 사진 위에 커서를 올리면 멈추고, 클릭하면 원본을 엽니다.`;
         rootElement.classList.add('is-ready');
         rootElement.dispatchEvent(new CustomEvent('gallerywheel:ready', { detail: { count: images.length } }));
         animationFrame = requestAnimationFrame(tick);
@@ -256,8 +324,10 @@
   return {
     calculateWheelFrame,
     mount,
+    normalizeLocalFallback,
     normalizeManifest,
     normalizeProgress,
+    resolvePointerRelease,
     shouldAnimate,
   };
 });
