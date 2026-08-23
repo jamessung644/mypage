@@ -292,9 +292,14 @@
               </h4>
               <div class="interest-tags">
                 <span class="interest-tag">
-                  <i class="fa-solid fa-robot"></i>
+                  <i class="fa-solid fa-brain"></i>
                   <span class="lang-ko">AI/머신러닝</span>
                   <span class="lang-en">AI / Machine Learning</span>
+                </span>
+                <span class="interest-tag">
+                  <i class="fa-solid fa-eye"></i>
+                  <span class="lang-ko">컴퓨터 비전</span>
+                  <span class="lang-en">Computer Vision</span>
                 </span>
                 <span class="interest-tag">
                   <i class="fa-solid fa-globe"></i>
@@ -302,7 +307,7 @@
                   <span class="lang-en">Web Development</span>
                 </span>
                 <span class="interest-tag">
-                  <i class="fa-solid fa-helicopter"></i>
+                  <i class="fa-solid fa-robot"></i>
                   <span class="lang-ko">로보틱스</span>
                   <span class="lang-en">Robotics</span>
                 </span>
@@ -311,18 +316,13 @@
                   <span class="lang-ko">환경 지속가능성</span>
                   <span class="lang-en">Sustainability</span>
                 </span>
-                <span class="interest-tag">
-                  <i class="fa-solid fa-eye"></i>
-                  <span class="lang-ko">컴퓨터 비전</span>
-                  <span class="lang-en">Computer Vision</span>
-                </span>
               </div>
             </div>
 
             <!-- 수상 통계 -->
             <div class="about__stats">
               <div class="stat-item">
-                <span class="stat-number" data-target="7">0</span>
+                <span class="stat-number" data-target="12">0</span>
                 <span class="stat-label">
                   <span class="lang-ko">수상</span>
                   <span class="lang-en">Awards</span>
@@ -456,10 +456,30 @@
 
         <div class="project-sequence">
           <article class="project-showcase project-showcase--reverse reveal" data-project-focus data-project-name="drone">
-            <div class="project-showcase__media">
-              <img src="Img/projects/drone-crowd.webp" alt="드론 영상에서 군중을 실시간 탐지하는 시스템 실행 화면" width="1200" height="780" loading="lazy" decoding="async" />
-              <span class="project-award-badge"><i class="fa-solid fa-trophy" aria-hidden="true"></i>대상 · 1위</span>
-              <span class="project-showcase__caption">LIVE INFERENCE · YOLOv8 + HOMOGRAPHY</span>
+            <div class="project-showcase__media project-showcase__media--slider project-showcase__media--drone">
+              <div class="project-slider project-slider--drone" data-project-slider tabindex="0" aria-label="실시간 군중밀도 모니터링 데모와 수상 기록 슬라이드">
+                <div class="project-slider__slide project-slider__slide--video is-active" data-project-slide aria-hidden="false">
+                  <iframe src="https://www.youtube.com/embed/WXHzLcVCvhw" title="실시간 군중밀도 모니터링 드론 시스템 데모" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <button class="project-slider__slide" data-project-slide type="button" aria-hidden="true" style="--slide-image: url('Img/projects/drone-award-2024.webp')">
+                  <img src="Img/projects/drone-award-2024.webp" alt="2024 스마트한 지역관광 문제해결 프로젝트 해커톤 최우수상 수상 현장" width="1440" height="1080" loading="lazy" decoding="async" />
+                </button>
+                <button class="project-slider__slide" data-project-slide type="button" aria-hidden="true" style="--slide-image: url('Img/projects/drone-graduation-panel.webp')">
+                  <img src="Img/projects/drone-graduation-panel.webp" alt="실시간 영상데이터를 활용한 군중밀집 감지드론 시스템 졸업작품 판넬" width="1274" height="1800" loading="lazy" decoding="async" />
+                </button>
+                <div class="project-award-stack" aria-label="대상 및 최우수상 수상">
+                  <span class="project-award-badge"><i class="fa-solid fa-trophy" aria-hidden="true"></i>대상</span>
+                  <span class="project-award-badge"><i class="fa-solid fa-trophy" aria-hidden="true"></i>최우수상</span>
+                </div>
+                <div class="project-slider__chrome">
+                  <span class="project-slider__brand"><i class="fa-solid fa-helicopter" aria-hidden="true"></i>Field archive</span>
+                  <div class="project-slider__controls">
+                    <button type="button" data-project-slider-prev aria-label="이전 드론 프로젝트 미디어"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                    <span data-project-slider-count aria-live="polite">1 / 3</span>
+                    <button type="button" data-project-slider-next aria-label="다음 드론 프로젝트 미디어"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="project-showcase__content">
               <div class="project-showcase__meta"><span>01</span><span>Computer Vision · 2024</span></div>
@@ -467,8 +487,8 @@
               <p class="lang-ko">드론 시점의 왜곡을 Homography로 보정하고 YOLOv8 탐지 결과를 실제 혼잡도와 관광 추천 서비스로 연결했습니다.</p>
               <p class="lang-en">Corrects drone perspective with homography and turns YOLOv8 detections into live crowd density and tourism recommendations.</p>
               <dl class="project-showcase__facts">
-                <div><dt>KTO Hackathon</dt><dd>1st</dd></div>
-                <div><dt>KNU</dt><dd>First Prize</dd></div>
+                <div><dt>KNU Capstone</dt><dd>대상</dd></div>
+                <div><dt>Graduation Exhibition</dt><dd>최우수상</dd></div>
               </dl>
               <div class="project-showcase__links">
                 <a class="project-showcase__link" href="https://youtu.be/WXHzLcVCvhw" target="_blank" rel="noreferrer">Watch demo <span>↗</span></a>

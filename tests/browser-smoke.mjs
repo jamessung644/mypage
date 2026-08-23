@@ -74,6 +74,25 @@ const initial = await evaluate(`(() => ({
   projectOrder: [...document.querySelectorAll('.project-sequence [data-project-name]')].map((project) => project.dataset.projectName),
   projectAwards: [...document.querySelectorAll('.project-award-badge')].map((badge) => (badge.closest('[data-project-name]')?.dataset.projectName || '') + ':' + badge.textContent.trim()),
   projectAwardHeights: [...document.querySelectorAll('.project-award-badge')].map((badge) => badge.getBoundingClientRect().height),
+  interestOrder: [...document.querySelectorAll('.interest-tag .lang-ko')].map((label) => label.textContent.trim()),
+  interestIcons: [...document.querySelectorAll('.interest-tag > i')].map((icon) => icon.className),
+  awardTarget: document.querySelector('.stat-number')?.getAttribute('data-target') || '',
+  drone: (() => {
+    const project = document.querySelector('[data-project-name="drone"]');
+    const slider = project?.querySelector('[data-project-slider]');
+    const slides = [...(project?.querySelectorAll('[data-project-slide]') || [])];
+    const images = [...(project?.querySelectorAll('[data-project-slide] img') || [])];
+    const iframe = slides[0]?.querySelector('iframe');
+    const media = project?.querySelector('.project-showcase__media');
+    return {
+      slides: slides.length,
+      mainVideo: iframe?.getAttribute('src') || '',
+      imageSources: images.map((image) => image.getAttribute('src') || ''),
+      mediaRadius: media ? parseFloat(getComputedStyle(media).borderTopLeftRadius) || 0 : 0,
+      counter: slider?.querySelector('[data-project-slider-count]')?.textContent.trim() || '',
+      facts: project?.querySelector('.project-showcase__facts')?.textContent.replace(/\s+/g, ' ').trim() || '',
+    };
+  })(),
   codeBuddy: (() => {
     const project = document.querySelector('[data-project-name="code-buddy"]');
     const media = project?.querySelector('.project-showcase__media');
@@ -106,6 +125,24 @@ await evaluate(`(() => {
 })()`);
 await new Promise((resolve) => setTimeout(resolve, 800));
 await screenshot('portfolio-projects-desktop-fixed.png');
+const droneSlider = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="drone"]');
+  const next = project.querySelector('[data-project-slider-next]');
+  next?.click();
+  const slides = [...project.querySelectorAll('[data-project-slide]')];
+  return {
+    activeIndex: slides.findIndex((slide) => slide.classList.contains('is-active')),
+    counter: project.querySelector('[data-project-slider-count]')?.textContent.trim() || '',
+  };
+})()`);
+const droneLightbox = await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="drone"]');
+  project.querySelector('.project-slider__slide.is-active')?.click();
+  const box = document.getElementById('lightbox');
+  const result = { open: box.classList.contains('open'), src: document.getElementById('lightboxImg').getAttribute('src') || '' };
+  if (result.open) window.portfolioLightbox.close();
+  return result;
+})()`);
 await evaluate(`(() => {
   const project = document.querySelector('[data-project-name="signature-mk1"]') || document.querySelectorAll('.project-showcase')[2];
   window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
@@ -236,8 +273,17 @@ const checks = {
   fiveProjectShowcases: initial.projectShowcases === 5,
   oneProjectArchiveItem: initial.projectArchiveItems === 1,
   requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
-  awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상 · 1위', 'pillosuffer:우수상 · 장려상']),
-  awardBadgesAreCompact: initial.projectAwardHeights.length === 2 && Math.max(...initial.projectAwardHeights) <= 36,
+  awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상', 'drone:최우수상', 'pillosuffer:우수상 · 장려상']),
+  awardBadgesAreCompact: initial.projectAwardHeights.length === 3 && Math.max(...initial.projectAwardHeights) <= 36,
+  interestsUseRequestedOrder: JSON.stringify(initial.interestOrder) === JSON.stringify(['AI/머신러닝', '컴퓨터 비전', '웹 개발', '로보틱스', '환경 지속가능성']),
+  interestsUseBrainAndRobot: initial.interestIcons[0]?.includes('fa-brain') && initial.interestIcons[3]?.includes('fa-robot'),
+  twelveAwardsShown: initial.awardTarget === '12',
+  droneHasVideoFirstGallery: initial.drone.slides === 3 && /youtube\.com\/embed\/WXHzLcVCvhw/.test(initial.drone.mainVideo) && initial.drone.counter === '1 / 3',
+  droneUsesRequestedPhotos: JSON.stringify(initial.drone.imageSources) === JSON.stringify(['Img/projects/drone-award-2024.webp', 'Img/projects/drone-graduation-panel.webp']),
+  droneGalleryUsesAppleRounding: initial.drone.mediaRadius >= 24,
+  droneAwardsReplaceFirstPlace: initial.projectAwards.includes('drone:대상') && initial.projectAwards.includes('drone:최우수상') && !initial.drone.facts.includes('1st') && !initial.drone.facts.includes('1위'),
+  droneSliderAdvances: droneSlider.activeIndex === 1 && droneSlider.counter === '2 / 3',
+  dronePhotoExpands: droneLightbox.open && /drone-award-2024\.webp$/.test(droneLightbox.src),
   codeBuddyUsesGithubIconCard: initial.codeBuddy.isShowcase && initial.codeBuddy.iconSrc === 'Img/codebuddy_icon.png' && codeBuddyIconLoaded && initial.codeBuddy.iconWidth >= 96 && initial.codeBuddy.mediaRadius >= 24,
   pillosufferHasThreeSlides: initial.pillosufferSlides === 3,
   pillosufferAppIsMain: initial.pillosufferMainSrc === 'Img/projects/pillosuffer-app-home.webp',
@@ -258,6 +304,6 @@ const checks = {
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;

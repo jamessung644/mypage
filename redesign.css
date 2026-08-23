@@ -382,6 +382,17 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   white-space: nowrap;
 }
 .project-award-badge i { font-size: .62rem; }
+.project-award-stack {
+  position: absolute;
+  top: clamp(.75rem, 1.4vw, 1rem);
+  left: clamp(.75rem, 1.4vw, 1rem);
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  max-width: calc(100% - 2rem);
+}
+.project-award-stack .project-award-badge { position: static; }
 
 /* Code Buddy identity stage */
 .project-showcase--codebuddy { grid-template-columns: minmax(0, 1.08fr) minmax(350px, .92fr); }
@@ -465,6 +476,21 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
 .project-slider__slide--app > img { padding: 1rem 1rem 5.4rem; }
 .project-slider__slide--app::before { opacity: .2; filter: blur(42px) saturate(.9); }
 .project-slider__slide:hover > img { transform: scale(1.012); }
+.project-slider__slide--video {
+  cursor: default;
+  background: #090b0d;
+}
+.project-slider__slide--video::before { display: none; }
+.project-slider__slide--video iframe {
+  position: absolute;
+  inset: 0 0 4.9rem;
+  z-index: 1;
+  width: 100%;
+  height: calc(100% - 4.9rem);
+  border: 0;
+  background: #000;
+}
+.project-slider--drone .project-slider__slide > img { padding-bottom: 5.4rem; }
 .project-slider__chrome {
   position: absolute;
   right: 1rem;
@@ -485,6 +511,16 @@ body.is-loaded .site-loader { opacity: 0; visibility: hidden; }
   color: #20242d;
 }
 .project-slider__brand { display: inline-flex; align-items: center; gap: .55rem; font: 650 .62rem/1 var(--font-code); letter-spacing: .07em; text-transform: uppercase; }
+.project-slider__brand > i {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #e8edfb;
+  color: #405c93;
+  font-size: .9rem;
+}
 .project-slider__brand img,
 .project-showcase:hover .project-slider__brand img {
   width: 38px;
