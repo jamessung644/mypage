@@ -73,6 +73,19 @@ const initial = await evaluate(`(() => ({
   projectArchiveItems: document.querySelectorAll('.project-archive__item').length,
   projectOrder: [...document.querySelectorAll('.project-sequence [data-project-name]')].map((project) => project.dataset.projectName),
   projectAwards: [...document.querySelectorAll('.project-award-badge')].map((badge) => (badge.closest('[data-project-name]')?.dataset.projectName || '') + ':' + badge.textContent.trim()),
+  projectAwardHeights: [...document.querySelectorAll('.project-award-badge')].map((badge) => badge.getBoundingClientRect().height),
+  codeBuddy: (() => {
+    const project = document.querySelector('[data-project-name="code-buddy"]');
+    const media = project?.querySelector('.project-showcase__media');
+    const icon = media?.querySelector('img');
+    return {
+      isShowcase: project?.classList.contains('project-showcase') || false,
+      iconSrc: icon?.getAttribute('src') || '',
+      iconLoaded: Boolean(icon?.complete && icon.naturalWidth > 0),
+      iconWidth: icon?.getBoundingClientRect().width || 0,
+      mediaRadius: media ? parseFloat(getComputedStyle(media).borderTopLeftRadius) || 0 : 0,
+    };
+  })(),
   pillosufferSlides: document.querySelectorAll('[data-project-name="pillosuffer"] [data-project-slide]').length,
   pillosufferRadius: parseFloat(getComputedStyle(document.querySelector('[data-project-name="pillosuffer"] .project-showcase__media')).borderTopLeftRadius) || 0,
   maskProjectPresent: document.body.textContent.includes('Mask R-CNN Reproduction'),
@@ -131,6 +144,17 @@ const pillosufferAccessibleControls = await evaluate(`(() => {
   slider.dispatchEvent(new PointerEvent('pointerup', { clientX: 180, bubbles: true }));
   const swipeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
   return { keyboardIndex, swipeIndex };
+})()`);
+await evaluate(`(() => {
+  const project = document.querySelector('[data-project-name="code-buddy"]');
+  window.scrollTo(0, project.getBoundingClientRect().top + scrollY - 100);
+  return true;
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 500));
+await screenshot('portfolio-code-buddy-desktop-fixed.png');
+const codeBuddyIconLoaded = await evaluate(`(() => {
+  const icon = document.querySelector('[data-project-name="code-buddy"] .project-showcase__media img');
+  return Boolean(icon?.complete && icon.naturalWidth > 0);
 })()`);
 await evaluate(`(() => {
   const stage = document.querySelector('[data-wheel-stage]');
@@ -202,10 +226,12 @@ await screenshot('portfolio-wheel-mobile-fixed.png');
 const checks = {
   fifteenImages: initial.count === 15,
   usesOriginalBloubSvg: initial.bloubSource === 'Img/bloub-squircle-excite-rouge-anime.svg',
-  fourProjectShowcases: initial.projectShowcases === 4,
-  twoProjectArchiveItems: initial.projectArchiveItems === 2,
+  fiveProjectShowcases: initial.projectShowcases === 5,
+  oneProjectArchiveItem: initial.projectArchiveItems === 1,
   requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
   awardBadgesVisible: JSON.stringify(initial.projectAwards) === JSON.stringify(['drone:대상 · 1위', 'pillosuffer:우수상']),
+  awardBadgesAreCompact: initial.projectAwardHeights.length === 2 && Math.max(...initial.projectAwardHeights) <= 36,
+  codeBuddyUsesGithubIconCard: initial.codeBuddy.isShowcase && initial.codeBuddy.iconSrc === 'Img/codebuddy_icon.png' && codeBuddyIconLoaded && initial.codeBuddy.iconWidth >= 96 && initial.codeBuddy.mediaRadius >= 24,
   pillosufferHasTwoSlides: initial.pillosufferSlides === 2,
   pillosufferUsesAppleRounding: initial.pillosufferRadius >= 24,
   pillosufferSliderAdvances: pillosufferSlider.advanced && pillosufferSlider.activeIndex === 1 && pillosufferSlider.counter === '2 / 2',
@@ -224,6 +250,6 @@ const checks = {
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;
