@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <!-- 반응형 뷰포트 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personal Page</title>
+  <title>Suhan Sung — AI · Computer Vision · Physical AI</title>
 
   <!-- 파비콘 (사이트 대표 이미지) -->
   <link rel="icon" type="image/svg+xml" href="Img/favicon.svg" />
@@ -13,30 +13,35 @@
   <link rel="apple-touch-icon" href="Img/apple-touch-icon.png" />
 
   <!-- 링크 공유 미리보기 (Open Graph) -->
-  <meta property="og:title" content="Personal Page" />
-  <meta property="og:description" content="Suhan Sung — AI & Web Developer Portfolio" />
+  <meta property="og:title" content="Suhan Sung — AI · Computer Vision · Physical AI" />
+  <meta property="og:description" content="Computer Vision, Physical AI, medical AI systems and selected work by Suhan Sung." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://jamessung644.github.io/mypage/Img/og-image.png" />
 
   <!-- Google Fonts: 메인 폰트 -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..800;1,300..800&family=Fira+Code:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
   <!-- Font Awesome: 아이콘 라이브러리 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- 외부 CSS 파일 연결 -->
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="redesign.css?v=1" />
 </head>
 
-<body>
+<body class="portfolio-redesign">
+
+  <div class="site-loader" id="siteLoader" role="status" aria-label="포트폴리오 불러오는 중">
+    <img src="Img/bloub-rouge.gif" width="160" height="160" alt="" />
+    <span>SUHAN SUNG · PORTFOLIO 2026</span>
+  </div>
 
   <!-- ========== HEADER / NAVIGATION ========== -->
   <header class="header" id="header">
     <nav class="nav container">
       <!-- 로고 영역 -->
       <a href="#home" class="nav__logo">
-        <span class="nav__logo-bracket">&lt;</span>SuhanSung
-        <span class="nav__logo-bracket">/&gt;</span>
+        <span class="nav__logo-bracket">SS/</span>26
       </a>
 
       <!-- 네비게이션 메뉴 (5개) -->
@@ -80,7 +85,7 @@
           <span class="lang-divider">|</span>
           <button class="lang-btn" id="btnLangEn">EN</button>
         </div>
-        <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기">
+        <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navMenu">
           <span class="nav__toggle-bar"></span>
           <span class="nav__toggle-bar"></span>
           <span class="nav__toggle-bar"></span>
@@ -105,10 +110,11 @@
             <span class="lang-en">Hello, I'm</span>
           </p>
           <h1 class="hero__title">
-            <span class="hero__name">Suhan Sung</span>
+            <span class="hero__name lang-ko">물리적인 세계를<br />이해하는 AI를<br />만듭니다.</span>
+            <span class="hero__name lang-en">I build AI that understands<br />the physical world.</span>
           </h1>
           <!-- 타이핑 효과 텍스트 -->
-          <h2 class="hero__subtitle lang-ko">
+          <h2 class="hero__subtitle lang-ko" aria-label="관심 분야">
             <span class="typing-prefix">저는 </span>
             <span class="typing-text" id="typingTextKo"></span>
             <span class="typing-cursor">|</span>
@@ -121,12 +127,12 @@
           </h2>
           <p class="hero__description">
             <span class="lang-ko">
-              강원대학교 AI융합학과 학사과정<br />
-              "Trying to be better"
+              성수한 · 강원대학교 AI융합학과<br />
+              Computer Vision과 Physical AI를 실제 문제에 연결합니다.
             </span>
             <span class="lang-en">
-              Bachelor's Student, Department of AI Convergence at Kangwon National University<br />
-              "Trying to be better"
+              Suhan Sung · AI Convergence at Kangwon National University<br />
+              Connecting Computer Vision and Physical AI to real problems.
             </span>
           </p>
 
@@ -158,29 +164,14 @@
           </div>
         </div>
 
-        <!-- 히어로 비주얼: 프로필 카드 -->
+        <!-- 히어로 비주얼: 인터랙티브 Bloub -->
         <div class="hero__visual">
-          <div class="profile-card">
-            <!-- 프로필 아바타 (CSS art) -->
-            <div class="profile-card__avatar">
-              <div class="avatar-ring"></div>
-              <div class="avatar-ring avatar-ring--2"></div>
-              <div class="avatar-inner">
-                <i class="fa-solid fa-user-astronaut"></i>
-              </div>
+          <div class="bloub" id="heroBloub" aria-hidden="true">
+            <div class="bloub__body">
+              <span class="bloub__eye"><i data-bloub-eye></i></span>
+              <span class="bloub__eye"><i data-bloub-eye></i></span>
             </div>
-            <!-- 플로팅 배지들 -->
-            <div class="floating-badge badge--ai">
-              <i class="fa-solid fa-brain"></i> AI/ML
-            </div>
-            <div class="floating-badge badge--web">
-              <i class="fa-solid fa-globe"></i> Web
-            </div>
-            <div class="floating-badge badge--award">
-              <i class="fa-solid fa-trophy"></i>
-              <span class="lang-ko">대상</span>
-              <span class="lang-en">Grand Prize</span>
-            </div>
+            <span class="bloub__note">CURIOUS BY DEFAULT</span>
           </div>
         </div>
       </div>
@@ -467,8 +458,52 @@
 
         <div class="projects__grid">
 
+          <article class="project-card project-card--featured project-card--latest reveal" data-project-focus>
+            <div class="project-card__image project-card__image--tylenol">
+              <div class="project-orbit" aria-hidden="true">
+                <span>HEALTH<br>BENCH</span>
+                <i></i>
+              </div>
+              <span class="project-state">LATEST · 2026</span>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag">Lunit L2</span>
+                <span class="project-tag">Medical RAG</span>
+                <span class="project-tag">OpenAI API</span>
+                <span class="project-tag">Docker</span>
+              </div>
+              <h3 class="project-card__title">Brave Tylenol</h3>
+              <p class="project-card__desc lang-ko">Lunit L2와 선택적 의료 RAG를 결합한 멀티턴 건강관리 챗봇입니다. 전체 대화 보존, 의료 안전 프롬프트, 4초 제한 검색과 동시성 제어를 설계해 HealthBench 개발 점수 49.80과 실제 L2 16/16 동시 요청 성공을 확인했습니다.</p>
+              <p class="project-card__desc lang-en">A multi-turn healthcare assistant combining Lunit L2 with selective medical RAG. Conversation preservation, safety prompting, bounded retrieval and concurrency control produced a 49.80 development score and 16/16 successful concurrent L2 requests.</p>
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644/BraveTylenol" target="_blank" rel="noreferrer" class="project-link"><i class="fa-brands fa-github"></i> GitHub</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card project-card--research reveal" data-project-focus>
+            <div class="project-card__image project-card__image--maskrcnn">
+              <div class="vision-layers" aria-hidden="true"><i></i><i></i><i></i><span>98%</span></div>
+              <span class="project-state">RESEARCH · 2026</span>
+            </div>
+            <div class="project-card__content">
+              <div class="project-card__tags">
+                <span class="project-tag">PyTorch</span>
+                <span class="project-tag">ResNet-50</span>
+                <span class="project-tag">FPN</span>
+              </div>
+              <h3 class="project-card__title">Mask R-CNN Reproduction</h3>
+              <p class="project-card__desc lang-ko">Mask R-CNN과 FPN 논문을 44.3M 파라미터 구조로 재현했습니다. 사전학습 텐서 307개를 모두 매핑하고 실제 COCO 이미지에서 레퍼런스 detection과 98% 일치시켰습니다.</p>
+              <p class="project-card__desc lang-en">A 44.3M-parameter reproduction of Mask R-CNN and FPN, with all 307 pretrained tensors mapped and 98% agreement with reference detections on real COCO images.</p>
+              <div class="project-card__links">
+                <a href="https://github.com/jamessung644/MaskRcnn-Reproduce" target="_blank" rel="noreferrer" class="project-link"><i class="fa-brands fa-github"></i> GitHub</a>
+              </div>
+            </div>
+          </article>
+
           <!-- 프로젝트 카드 1: 드론 + 관광 통합 프로젝트 (메인) -->
-          <article class="project-card project-card--featured reveal">
+          <article class="project-card project-card--featured reveal" data-project-focus>
             <!-- 왼쪽: YouTube 데모 영상 -->
             <div class="project-card__image">
               <div class="project-video-wrap">
@@ -552,7 +587,7 @@
           </article>
 
           <!-- 프로젝트 카드 2: Pill-Good -->
-          <article class="project-card reveal">
+          <article class="project-card reveal" data-project-focus>
             <div class="project-card__image">
               <div class="project-img project-img--iot">
                 <div class="iot-visual">
@@ -621,7 +656,7 @@
           </article>
 
           <!-- 프로젝트 카드 4: Codebuddy -->
-          <article class="project-card reveal">
+          <article class="project-card reveal" data-project-focus>
             <div class="project-card__image">
               <div class="project-img project-img--web">
                 <div class="web-visual">
@@ -653,12 +688,17 @@
           </article>
 
           <!-- 프로젝트 카드 5: PilloSuffer -->
-          <article class="project-card reveal">
+          <article class="project-card project-card--wide project-card--pillosuffer reveal" data-project-focus>
             <div class="project-card__image">
               <div class="project-img project-img--health">
                 <div class="health-visual">
                   <i class="fa-solid fa-prescription-bottle-medical fa-3x"></i>
                 </div>
+              </div>
+              <div class="project-card__badge">
+                <i class="fa-solid fa-trophy"></i>
+                <span class="lang-ko">우수상</span>
+                <span class="lang-en">Excellence Award</span>
               </div>
             </div>
             <div class="project-card__content">
@@ -683,6 +723,26 @@
                   envelopes and analyze real-time interaction safety/risk levels with a user's food or supplement
                   intake.</span>
               </p>
+              <div class="project-awards">
+                <div class="award-item">
+                  <i class="fa-solid fa-medal"></i>
+                  <div>
+                    <strong class="lang-ko">2026 X+AI·SW 융합프로젝트 경진대회</strong>
+                    <strong class="lang-en">2026 X+AI·SW Convergence Project Competition</strong>
+                    <span class="lang-ko">우수상 수상 · 강원대학교 SW중심대학사업단</span>
+                    <span class="lang-en">Excellence Award · KNU SW-Centered University Program</span>
+                  </div>
+                </div>
+                <div class="award-item">
+                  <i class="fa-solid fa-award"></i>
+                  <div>
+                    <strong class="lang-ko">2026 제4회 혁신융합 창업 아이디어톤</strong>
+                    <strong class="lang-en">2026 4th Innovation Convergence Startup Ideathon</strong>
+                    <span class="lang-ko">장려상 수상 · 강원대학교 데이터보안·활용 혁신융합대학사업단</span>
+                    <span class="lang-en">Encouragement Award · KNU Data Security & Utilization COSS</span>
+                  </div>
+                </div>
+              </div>
               <div class="project-card__links">
                 <a href="https://github.com/jamessung644/Pillosuffer" target="_blank" class="project-link">
                   <i class="fa-brands fa-github"></i> GitHub
@@ -741,19 +801,39 @@
       <div class="container">
         <div class="section__header reveal">
           <span class="section__tag">Gallery</span>
-          <h2 class="section__title">Photo & Video</h2>
+          <h2 class="section__title">Field Notes</h2>
           <p class="section__subtitle">
             <span class="lang-ko">프로젝트와 일상의 순간들</span>
             <span class="lang-en">Moments of projects and daily life</span>
           </p>
         </div>
 
-        <!-- 사진 그리드 -->
-        <div class="gallery-grid">
+        <div class="image-wheel" id="imageWheel" data-fallback-url="gallery.json" data-remote-url=""
+          aria-labelledby="imageWheelTitle">
+          <div class="image-wheel__header">
+            <span class="section__tag">Field Notes · 15 frames</span>
+            <h3 id="imageWheelTitle">
+              <span class="lang-ko">과정도 함께 남깁니다.</span>
+              <span class="lang-en">The process stays in frame.</span>
+            </h3>
+          </div>
+          <div class="image-wheel__stage" data-wheel-stage aria-live="off">
+            <p class="image-wheel__fallback"><a href="Img/1.jpg">사진 기록 보기</a></p>
+          </div>
+          <label class="image-wheel__scrubber">
+            <span class="lang-ko">이미지 휠 돌리기</span>
+            <span class="lang-en">Rotate image wheel</span>
+            <input type="range" min="0" max="1000" value="0" step="1" data-wheel-slider />
+          </label>
+          <p class="image-wheel__status" data-wheel-status aria-live="polite"></p>
+        </div>
+
+        <!-- 기존 정적 그리드: 마이그레이션 비교용으로만 유지하고 화면에는 렌더링하지 않음 -->
+        <div class="gallery-grid gallery-grid--legacy" hidden>
 
           <!-- 이미지 1 (세로) -->
           <div class="gallery-item gallery-item--portrait reveal" data-src="Img/1.jpg">
-            <img src="Img/1.jpg" alt="사진 1" loading="lazy" />
+            <img data-src="Img/1.jpg" alt="사진 1" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -761,7 +841,7 @@
 
           <!-- 이미지 2 (세로) -->
           <div class="gallery-item gallery-item--portrait reveal" data-src="Img/2.jpg">
-            <img src="Img/2.jpg" alt="사진 2" loading="lazy" />
+            <img data-src="Img/2.jpg" alt="사진 2" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -769,7 +849,7 @@
 
           <!-- 이미지 3 (세로) -->
           <div class="gallery-item gallery-item--portrait reveal" data-src="Img/3.jpg">
-            <img src="Img/3.jpg" alt="사진 3" loading="lazy" />
+            <img data-src="Img/3.jpg" alt="사진 3" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -777,7 +857,7 @@
 
           <!-- 이미지 4 (세로) -->
           <div class="gallery-item gallery-item--portrait reveal" data-src="Img/4.jpg">
-            <img src="Img/4.jpg" alt="사진 4" loading="lazy" />
+            <img data-src="Img/4.jpg" alt="사진 4" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -785,7 +865,7 @@
 
           <!-- 이미지 5 (세로) -->
           <div class="gallery-item gallery-item--portrait reveal" data-src="Img/5.jpg">
-            <img src="Img/5.jpg" alt="사진 5" loading="lazy" />
+            <img data-src="Img/5.jpg" alt="사진 5" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -793,7 +873,7 @@
 
           <!-- 이미지 6 -->
           <div class="gallery-item reveal" data-src="Img/6.png">
-            <img src="Img/6.png" alt="사진 6" loading="lazy" />
+            <img data-src="Img/6.png" alt="사진 6" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -801,7 +881,7 @@
 
           <!-- 이미지 7 -->
           <div class="gallery-item reveal" data-src="Img/7.jpeg">
-            <img src="Img/7.jpeg" alt="사진 7" loading="lazy" />
+            <img data-src="Img/7.jpeg" alt="사진 7" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -809,7 +889,7 @@
 
           <!-- 이미지 8 -->
           <div class="gallery-item reveal" data-src="Img/8.jpeg">
-            <img src="Img/8.jpeg" alt="사진 8" loading="lazy" />
+            <img data-src="Img/8.jpeg" alt="사진 8" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -817,7 +897,7 @@
 
           <!-- 이미지 9 -->
           <div class="gallery-item reveal" data-src="Img/9.jpeg">
-            <img src="Img/9.jpeg" alt="사진 9" loading="lazy" />
+            <img data-src="Img/9.jpeg" alt="사진 9" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -825,7 +905,7 @@
 
           <!-- 이미지 10 -->
           <div class="gallery-item reveal" data-src="Img/10.jpeg">
-            <img src="Img/10.jpeg" alt="사진 10" loading="lazy" />
+            <img data-src="Img/10.jpeg" alt="사진 10" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -833,7 +913,7 @@
 
           <!-- 이미지 11 -->
           <div class="gallery-item reveal" data-src="Img/11.jpg">
-            <img src="Img/11.jpg" alt="사진 11" loading="lazy" />
+            <img data-src="Img/11.jpg" alt="사진 11" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -841,7 +921,7 @@
 
           <!-- 이미지 12 -->
           <div class="gallery-item reveal" data-src="Img/12.jpeg">
-            <img src="Img/12.jpeg" alt="사진 12" loading="lazy" />
+            <img data-src="Img/12.jpeg" alt="사진 12" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -849,7 +929,7 @@
 
           <!-- 이미지 13 -->
           <div class="gallery-item reveal" data-src="Img/13.jpeg">
-            <img src="Img/13.jpeg" alt="사진 13" loading="lazy" />
+            <img data-src="Img/13.jpeg" alt="사진 13" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -857,7 +937,7 @@
 
           <!-- 이미지 14 -->
           <div class="gallery-item reveal" data-src="Img/14.jpeg">
-            <img src="Img/14.jpeg" alt="사진 14" loading="lazy" />
+            <img data-src="Img/14.jpeg" alt="사진 14" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -865,7 +945,7 @@
 
           <!-- 이미지 15 -->
           <div class="gallery-item reveal" data-src="Img/15.jpg">
-            <img src="Img/15.jpg" alt="사진 15" loading="lazy" />
+            <img data-src="Img/15.jpg" alt="사진 15" loading="lazy" />
             <div class="gallery-item__overlay">
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </div>
@@ -978,7 +1058,7 @@
     </section>
 
     <!-- 라이트박스 모달 (전체 화면 이미지 확대) -->
-    <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="확대 이미지">
       <button class="lightbox__close" id="lightboxClose" aria-label="닫기">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -1152,6 +1232,8 @@
 
   <!-- 외부 JavaScript 파일 연결 -->
   <script src="script.js"></script>
+  <script src="gallery-wheel.js"></script>
+  <script src="bloub.js"></script>
 </body>
 
 </html>

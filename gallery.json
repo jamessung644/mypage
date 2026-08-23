@@ -1,0 +1,19 @@
+{
+  "images": [
+    { "id": "photo-01", "thumb": "Img/gallery/1.webp", "large": "Img/1.jpg", "alt": "최우수상 수상 기록", "caption": "최우수상 수상 기록", "uploaded": "2026-08-23T00:00:15Z", "width": 960, "height": 1200 },
+    { "id": "photo-02", "thumb": "Img/gallery/2.webp", "large": "Img/2.jpg", "alt": "챌린지상 수상 기록", "caption": "챌린지상 수상 기록", "uploaded": "2026-08-23T00:00:14Z", "width": 962, "height": 1200 },
+    { "id": "photo-03", "thumb": "Img/gallery/3.webp", "large": "Img/3.jpg", "alt": "프로젝트 시상식 기록", "caption": "프로젝트 시상식 기록", "uploaded": "2026-08-23T00:00:13Z", "width": 962, "height": 1200 },
+    { "id": "photo-04", "thumb": "Img/gallery/4.webp", "large": "Img/4.jpg", "alt": "교내 창업경진대회 수상 기록", "caption": "교내 창업경진대회 수상 기록", "uploaded": "2026-08-23T00:00:12Z", "width": 962, "height": 1200 },
+    { "id": "photo-05", "thumb": "Img/gallery/5.webp", "large": "Img/5.jpg", "alt": "야외에서 상장을 든 프로젝트 수상 기록", "caption": "프로젝트 수상 기록", "uploaded": "2026-08-23T00:00:11Z", "width": 960, "height": 1200 },
+    { "id": "photo-06", "thumb": "Img/gallery/6.webp", "large": "Img/6.png", "alt": "군중 밀도 분석 시스템 실행 화면", "caption": "Computer Vision · Density Estimation", "uploaded": "2026-08-23T00:00:10Z", "width": 1200, "height": 780 },
+    { "id": "photo-07", "thumb": "Img/gallery/7.webp", "large": "Img/7.jpeg", "alt": "프로젝트 일정 중 촬영한 현장 기록", "caption": "Field Note · Between Builds", "uploaded": "2026-08-23T00:00:09Z", "width": 900, "height": 1200 },
+    { "id": "photo-08", "thumb": "Img/gallery/8.webp", "large": "Img/8.jpeg", "alt": "프로젝트 수상 상장", "caption": "Project Milestone", "uploaded": "2026-08-23T00:00:08Z", "width": 900, "height": 1200 },
+    { "id": "photo-09", "thumb": "Img/gallery/9.webp", "large": "Img/9.jpeg", "alt": "Physical AI 로봇 프로토타입", "caption": "Physical AI · Prototype", "uploaded": "2026-08-23T00:00:07Z", "width": 900, "height": 1200 },
+    { "id": "photo-10", "thumb": "Img/gallery/10.webp", "large": "Img/10.jpeg", "alt": "실험 장비가 놓인 연구 공간", "caption": "Lab Note", "uploaded": "2026-08-23T00:00:06Z", "width": 1200, "height": 900 },
+    { "id": "photo-11", "thumb": "Img/gallery/11.webp", "large": "Img/11.jpg", "alt": "Microsoft Korea 경진대회 수상 기록", "caption": "Microsoft Korea · Milestone", "uploaded": "2026-08-23T00:00:05Z", "width": 900, "height": 1200 },
+    { "id": "photo-12", "thumb": "Img/gallery/12.webp", "large": "Img/12.jpeg", "alt": "프로젝트 발표 현장", "caption": "Project Presentation", "uploaded": "2026-08-23T00:00:04Z", "width": 900, "height": 1200 },
+    { "id": "photo-13", "thumb": "Img/gallery/13.webp", "large": "Img/13.jpeg", "alt": "전공작품 최우수상 수상 기록", "caption": "Major Project · First Prize", "uploaded": "2026-08-23T00:00:03Z", "width": 900, "height": 1200 },
+    { "id": "photo-14", "thumb": "Img/gallery/14.webp", "large": "Img/14.jpeg", "alt": "인공지능워크 2023 참가 기록", "caption": "AI Workshop · 2023", "uploaded": "2026-08-23T00:00:02Z", "width": 900, "height": 1200 },
+    { "id": "photo-15", "thumb": "Img/gallery/15.webp", "large": "Img/15.jpg", "alt": "컴퓨터 비전 모델 구조 연구 자료", "caption": "Research Note · Computer Vision", "uploaded": "2026-08-23T00:00:01Z", "width": 1200, "height": 734 }
+  ]
+}

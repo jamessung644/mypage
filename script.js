@@ -39,6 +39,7 @@ navToggle.addEventListener('click', () => {
   navToggle.classList.toggle('open');
   navMenu.classList.toggle('open');
   header.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', navToggle.classList.contains('open') ? 'true' : 'false');
 });
 
 // 메뉴 링크 클릭 시 모바일 메뉴 닫기
@@ -47,6 +48,7 @@ navLinks.forEach(link => {
     navToggle.classList.remove('open');
     navMenu.classList.remove('open');
     header.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
   });
 });
 
@@ -401,21 +403,34 @@ const lightboxBackdrop = document.getElementById('lightboxBackdrop');
 
 /**
  * 라이트박스를 열고 지정된 이미지를 표시
- * @param {string} src - 표시할 이미지 경로
+ * @param {object|string} image - 표시할 이미지 정보 또는 이미지 경로
+ * @param {HTMLElement|null} trigger - 닫을 때 포커스를 돌려줄 요소
  */
-function openLightbox(src) {
-  lightboxImg.src = src;
+let lightboxTrigger = null;
+
+function openLightbox(image, trigger = null) {
+  const normalized = typeof image === 'string'
+    ? { large: image, alt: '확대 이미지', caption: '' }
+    : image;
+  lightboxTrigger = trigger;
+  lightboxImg.src = normalized.large;
+  lightboxImg.alt = normalized.alt || '확대 이미지';
   lightbox.classList.add('open');
   lightbox.setAttribute('aria-hidden', 'false');
+  document.dispatchEvent(new CustomEvent('portfolio:lightbox-open'));
   // 스크롤 잠금
   document.body.style.overflow = 'hidden';
+  lightboxClose?.focus({ preventScroll: true });
 }
 
 /** 라이트박스 닫기 */
 function closeLightbox() {
   lightbox.classList.remove('open');
   lightbox.setAttribute('aria-hidden', 'true');
+  document.dispatchEvent(new CustomEvent('portfolio:lightbox-close'));
   document.body.style.overflow = '';
+  lightboxTrigger?.focus({ preventScroll: true });
+  lightboxTrigger = null;
   // 이미지 src 초기화 (메모리 절약)
   setTimeout(() => { lightboxImg.src = ''; }, 300);
 }
@@ -423,9 +438,11 @@ function closeLightbox() {
 // 갤러리 아이템 클릭 이벤트 등록
 document.querySelectorAll('.gallery-item[data-src]').forEach(item => {
   item.addEventListener('click', () => {
-    openLightbox(item.getAttribute('data-src'));
+    openLightbox(item.getAttribute('data-src'), item);
   });
 });
+
+window.portfolioLightbox = { open: openLightbox, close: closeLightbox };
 
 // 닫기 버튼 & 배경 클릭으로 닫기
 if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
