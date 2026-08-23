@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const {
+  calculateSpacedRadiusX,
   calculateWheelFrame,
   normalizeLocalFallback,
   normalizeManifest,
@@ -92,6 +93,34 @@ test('calculateWheelFrame crossfades adjacent cards at the front handoff', () =>
   assert.ok(outgoing.opacity >= 0.55 && outgoing.opacity <= 0.62);
   assert.ok(incoming.opacity >= 0.55 && incoming.opacity <= 0.62);
   assert.ok(Math.abs(outgoing.opacity - incoming.opacity) < 0.001);
+});
+
+test('calculateWheelFrame smoothly enlarges only the centered card', () => {
+  const count = 15;
+  const centered = calculateWheelFrame(0, count, 0.25);
+  const approaching = calculateWheelFrame(0, count, 0.25 + 1 / (count * 4));
+  const handoff = calculateWheelFrame(0, count, 0.25 + 1 / (count * 2));
+
+  assert.ok(Math.abs(centered.scale - 1.3) < 0.001);
+  assert.ok(centered.scale > approaching.scale);
+  assert.ok(approaching.scale > handoff.scale);
+});
+
+test('calculateSpacedRadiusX preserves a visible gap as the gallery grows', () => {
+  const count = 22;
+  const stageWidth = 1168;
+  const cardWidth = 330;
+  const gap = 24;
+  const maxScale = 1.3;
+  const radiusX = calculateSpacedRadiusX?.(count, stageWidth, cardWidth, {
+    baseRadiusX: 44,
+    gap,
+    maxScale,
+  });
+  const adjacentDistance = Math.sin((Math.PI * 2) / count) * (radiusX / 100) * stageWidth;
+
+  assert.ok(radiusX > 44);
+  assert.ok(adjacentDistance >= cardWidth * maxScale + gap - 0.001);
 });
 
 test('shouldAnimate requires multiple images and no pause reasons', () => {

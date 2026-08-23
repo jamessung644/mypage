@@ -3,7 +3,13 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.GalleryWheel = api;
 })(typeof window !== 'undefined' ? window : globalThis, function buildGalleryWheelApi() {
-  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 90 };
+  const DEFAULT_GEOMETRY = {
+    radiusX: 44,
+    radiusY: 18,
+    depth: 0.22,
+    tiltY: 90,
+    focusScale: 0.08,
+  };
 
   function normalizeProgress(value) {
     if (!Number.isFinite(value)) return 0;
@@ -47,11 +53,26 @@
       });
   }
 
+  function calculateSpacedRadiusX(count, stageWidth, cardWidth, options = {}) {
+    const baseRadiusX = options.baseRadiusX ?? DEFAULT_GEOMETRY.radiusX;
+    if (count < 3 || stageWidth <= 0 || cardWidth <= 0) return baseRadiusX;
+
+    const gap = Math.max(Number(options.gap) || 0, 0);
+    const maxScale = Math.max(Number(options.maxScale) || 1, 1);
+    const adjacentOffset = Math.abs(Math.sin((Math.PI * 2) / count));
+    if (adjacentOffset < 0.001) return baseRadiusX;
+
+    const requiredDistance = cardWidth * maxScale + gap;
+    const requiredRadiusX = (requiredDistance / adjacentOffset / stageWidth) * 100;
+    return Math.max(baseRadiusX, requiredRadiusX);
+  }
+
   function calculateWheelFrame(index, count, progress, geometry = {}) {
     const radiusX = geometry.radiusX ?? DEFAULT_GEOMETRY.radiusX;
     const radiusY = geometry.radiusY ?? DEFAULT_GEOMETRY.radiusY;
     const depth = geometry.depth ?? DEFAULT_GEOMETRY.depth;
     const tiltY = geometry.tiltY ?? DEFAULT_GEOMETRY.tiltY;
+    const focusScale = geometry.focusScale ?? DEFAULT_GEOMETRY.focusScale;
     const angle = ((index / Math.max(count, 1)) + normalizeProgress(progress)) * Math.PI * 2;
     const fullTurn = Math.PI * 2;
     const frontOffset = ((angle - Math.PI / 2 + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
@@ -66,7 +87,7 @@
     return {
       xPercent: Math.cos(angle) * radiusX,
       yPercent: Math.sin(angle) * radiusY,
-      scale: 1 - depth + z * depth * 2,
+      scale: 1 - depth + z * depth * 2 + easedFrontFocus * focusScale,
       opacity: Math.min(depthOpacity, handoffOpacity),
       rotationDeg: Math.cos(angle) * -3.5,
       rotationYDeg: (frontOffset / Math.PI) * tiltY,
@@ -148,9 +169,16 @@
       const stageWidth = stage.clientWidth || 800;
       const stageHeight = stage.clientHeight || 500;
       const compact = stageWidth < 640;
-      const geometry = compact
-        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 90 }
+      const baseGeometry = compact
+        ? { radiusX: 39, radiusY: 20, depth: 0.16, tiltY: 90, focusScale: 0.06 }
         : DEFAULT_GEOMETRY;
+      const cardWidth = items[0]?.offsetWidth || (compact ? 220 : 330);
+      const radiusX = calculateSpacedRadiusX(items.length, stageWidth, cardWidth, {
+        baseRadiusX: baseGeometry.radiusX,
+        gap: compact ? 12 : 24,
+        maxScale: 1 + baseGeometry.depth + baseGeometry.focusScale,
+      });
+      const geometry = { ...baseGeometry, radiusX };
 
       items.forEach((item, index) => {
         const frame = calculateWheelFrame(index, items.length, progress, geometry);
@@ -322,6 +350,7 @@
   }
 
   return {
+    calculateSpacedRadiusX,
     calculateWheelFrame,
     mount,
     normalizeLocalFallback,
