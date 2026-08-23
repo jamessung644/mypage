@@ -79,4 +79,3 @@ export default {
     return Response.json({ images }, { headers: { ...jsonHeaders, ...cors } });
   },
 };
-

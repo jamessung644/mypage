@@ -46,4 +46,3 @@ Worker 또는 네트워크가 실패하면 현재 저장소의 `gallery.json`을
   "height": 1200
 }
 ```
-
