@@ -3,19 +3,6 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.GalleryWheel = api;
 })(typeof window !== 'undefined' ? window : globalThis, function buildGalleryWheelApi() {
-  const DEFAULT_GEOMETRY = {
-    radiusX: 44,
-    radiusY: 18,
-    depth: 0.22,
-    tiltY: 90,
-    focusScale: 0.08,
-  };
-
-  function normalizeProgress(value) {
-    if (!Number.isFinite(value)) return 0;
-    return ((value % 1) + 1) % 1;
-  }
-
   function normalizeManifest(payload) {
     const list = payload && Array.isArray(payload.images) ? payload.images : [];
     return list
@@ -53,46 +40,53 @@
       });
   }
 
-  function calculateSpacedRadiusX(count, stageWidth, cardWidth, options = {}) {
-    const baseRadiusX = options.baseRadiusX ?? DEFAULT_GEOMETRY.radiusX;
-    if (count < 3 || stageWidth <= 0 || cardWidth <= 0) return baseRadiusX;
+  function calculateCarouselFrame(index, count, progress, geometry = {}) {
+    const safeCount = Math.max(count, 1);
+    const slotX = geometry.slotX ?? 46;
+    const sideRotation = geometry.sideRotation ?? 70;
+    let relative = index - progress;
+    relative = ((relative + safeCount / 2) % safeCount + safeCount) % safeCount - safeCount / 2;
 
-    const gap = Math.max(Number(options.gap) || 0, 0);
-    const maxScale = Math.max(Number(options.maxScale) || 1, 1);
-    const adjacentOffset = Math.abs(Math.sin((Math.PI * 2) / count));
-    if (adjacentOffset < 0.001) return baseRadiusX;
+    const distance = Math.abs(relative);
+    const focus = Math.max(0, 1 - distance);
+    const easedFocus = focus * focus * (3 - 2 * focus);
+    const opacity = distance <= 1
+      ? 1 - distance * 0.25
+      : Math.max(0, 0.75 * (1 - (distance - 1) / 0.25));
 
-    const requiredDistance = cardWidth * maxScale + gap;
-    const requiredRadiusX = (requiredDistance / adjacentOffset / stageWidth) * 100;
-    return Math.max(baseRadiusX, requiredRadiusX);
+    return {
+      xPercent: relative * slotX,
+      yPercent: 0,
+      scale: 0.84 + easedFocus * 0.28,
+      opacity,
+      rotationDeg: relative === 0 ? 0 : Math.max(-3, Math.min(3, relative * -2.5)),
+      rotationYDeg: relative === 0 ? 0 : Math.max(-90, Math.min(90, relative * -sideRotation)),
+      zIndex: Math.max(1, Math.round(100 - distance * 24)),
+      interactive: distance <= 1 && opacity > 0.05,
+    };
   }
 
-  function calculateWheelFrame(index, count, progress, geometry = {}) {
-    const radiusX = geometry.radiusX ?? DEFAULT_GEOMETRY.radiusX;
-    const radiusY = geometry.radiusY ?? DEFAULT_GEOMETRY.radiusY;
-    const depth = geometry.depth ?? DEFAULT_GEOMETRY.depth;
-    const tiltY = geometry.tiltY ?? DEFAULT_GEOMETRY.tiltY;
-    const focusScale = geometry.focusScale ?? DEFAULT_GEOMETRY.focusScale;
-    const angle = ((index / Math.max(count, 1)) + normalizeProgress(progress)) * Math.PI * 2;
-    const fullTurn = Math.PI * 2;
-    const frontOffset = ((angle - Math.PI / 2 + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
-    const z = (Math.sin(angle) + 1) / 2;
-    const itemStep = fullTurn / Math.max(count, 1);
-    const handoffDistance = itemStep / 2;
-    const normalizedFrontDistance = Math.min(Math.abs(frontOffset) / handoffDistance, 1);
-    const frontFocus = 1 - normalizedFrontDistance;
-    const easedFrontFocus = frontFocus * frontFocus * (3 - 2 * frontFocus);
-    const depthOpacity = 0.44 + z * 0.56;
-    const handoffOpacity = 0.58 + easedFrontFocus * 0.42;
-    return {
-      xPercent: Math.cos(angle) * radiusX,
-      yPercent: Math.sin(angle) * radiusY,
-      scale: 1 - depth + z * depth * 2 + easedFrontFocus * focusScale,
-      opacity: Math.min(depthOpacity, handoffOpacity),
-      rotationDeg: Math.cos(angle) * -3.5,
-      rotationYDeg: (frontOffset / Math.PI) * tiltY,
-      zIndex: Math.round(z * 100),
-    };
+  function calculateAutoplayStep(elapsedMs, holdMs = 2500, transitionMs = 900) {
+    const elapsed = Math.max(Number(elapsedMs) || 0, 0);
+    const hold = Math.max(Number(holdMs) || 0, 0);
+    const transition = Math.max(Number(transitionMs) || 0, 1);
+    if (elapsed <= hold) return { offset: 0, complete: false };
+    if (elapsed >= hold + transition) return { offset: 1, complete: true };
+
+    const linear = (elapsed - hold) / transition;
+    const eased = linear * linear * (3 - 2 * linear);
+    return { offset: eased, complete: false };
+  }
+
+  function calculateCarouselSlotX(stageWidth, cardWidth, options = {}) {
+    const minimumSlotX = Math.max(Number(options.minimumSlotX) || 0, 0);
+    if (stageWidth <= 0 || cardWidth <= 0) return minimumSlotX;
+
+    const gap = Math.max(Number(options.gap) || 0, 0);
+    const projectionScale = Math.max(Number(options.projectionScale) || 1, 0);
+    const transitionScale = Math.max(Number(options.transitionScale) || 1, 0);
+    const requiredSlotX = ((cardWidth * transitionScale * projectionScale + gap) / stageWidth) * 100;
+    return Math.max(minimumSlotX, requiredSlotX);
   }
 
   function shouldAnimate(pauses, reducedMotion, itemCount) {
@@ -102,6 +96,14 @@
   function resolvePointerRelease(dragState) {
     if (!dragState || dragState.moved || !Number.isInteger(dragState.imageIndex)) return -1;
     return dragState.imageIndex >= 0 ? dragState.imageIndex : -1;
+  }
+
+  function resolveFilmstripPosition(activeIndex, itemCount) {
+    const total = Math.max(Math.trunc(Number(itemCount) || 0), 0);
+    if (!total) return { index: 0, current: 0, total: 0 };
+    const rawIndex = Math.trunc(Number(activeIndex) || 0);
+    const index = ((rawIndex % total) + total) % total;
+    return { index, current: index + 1, total };
   }
 
   async function fetchManifest(url) {
@@ -134,6 +136,8 @@
 
     const stage = rootElement.querySelector('[data-wheel-stage]');
     const status = rootElement.querySelector('[data-wheel-status]');
+    const thumbnailsRoot = rootElement.querySelector('[data-wheel-thumbnails]');
+    const counter = rootElement.querySelector('[data-wheel-counter]');
     if (!stage) return Promise.resolve(null);
 
     const remoteUrl = options.remoteUrl ?? rootElement.dataset.remoteUrl ?? '';
@@ -153,35 +157,58 @@
     const pauses = new Set();
     let images = [];
     let items = [];
+    let thumbnails = [];
     let progress = 0;
+    let activeIndex = 0;
+    let cycleElapsed = 0;
     let lastTime = 0;
     let animationFrame = 0;
     let dragging = null;
     let suppressClick = false;
+    let currentSlotX = 46;
 
     const setPause = (reason, paused) => {
       if (paused) pauses.add(reason);
       else pauses.delete(reason);
     };
 
+    const updateFilmstrip = (nextIndex = activeIndex, centerActive = false) => {
+      const position = resolveFilmstripPosition(nextIndex, images.length);
+      thumbnails.forEach((thumbnail, index) => {
+        const isActive = index === position.index;
+        thumbnail.classList.toggle('is-active', isActive);
+        if (isActive) thumbnail.setAttribute('aria-current', 'true');
+        else thumbnail.removeAttribute('aria-current');
+      });
+      if (counter) {
+        const width = Math.max(String(position.total).length, 2);
+        counter.textContent = `${String(position.current).padStart(width, '0')} / ${String(position.total).padStart(width, '0')}`;
+      }
+      if (centerActive && thumbnailsRoot && thumbnails[position.index]) {
+        const activeThumbnail = thumbnails[position.index];
+        const left = activeThumbnail.offsetLeft - (thumbnailsRoot.clientWidth - activeThumbnail.offsetWidth) / 2;
+        thumbnailsRoot.scrollTo({
+          left: Math.max(left, 0),
+          behavior: reducedMotionQuery.matches ? 'auto' : 'smooth',
+        });
+      }
+    };
+
     const render = (nextProgress = progress) => {
-      progress = normalizeProgress(nextProgress);
+      progress = Number.isFinite(nextProgress) ? nextProgress : 0;
       const stageWidth = stage.clientWidth || 800;
       const stageHeight = stage.clientHeight || 500;
-      const compact = stageWidth < 640;
-      const baseGeometry = compact
-        ? { radiusX: 39, radiusY: 20, depth: 0.16, tiltY: 90, focusScale: 0.06 }
-        : DEFAULT_GEOMETRY;
-      const cardWidth = items[0]?.offsetWidth || (compact ? 220 : 330);
-      const radiusX = calculateSpacedRadiusX(items.length, stageWidth, cardWidth, {
-        baseRadiusX: baseGeometry.radiusX,
-        gap: compact ? 12 : 24,
-        maxScale: 1 + baseGeometry.depth + baseGeometry.focusScale,
+      const cardWidth = items[0]?.offsetWidth || 400;
+      currentSlotX = calculateCarouselSlotX(stageWidth, cardWidth, {
+        gap: stageWidth < 768 ? 12 : 32,
+        projectionScale: 0.84,
+        transitionScale: 0.98,
+        minimumSlotX: 32,
       });
-      const geometry = { ...baseGeometry, radiusX };
+      const geometry = { slotX: currentSlotX, sideRotation: 70 };
 
       items.forEach((item, index) => {
-        const frame = calculateWheelFrame(index, items.length, progress, geometry);
+        const frame = calculateCarouselFrame(index, items.length, progress, geometry);
         item.style.setProperty('--wheel-x', `${(frame.xPercent / 100) * stageWidth}px`);
         item.style.setProperty('--wheel-y', `${(frame.yPercent / 100) * stageHeight}px`);
         item.style.setProperty('--wheel-scale', frame.scale.toFixed(3));
@@ -189,6 +216,9 @@
         item.style.setProperty('--wheel-rotation', frame.rotationDeg.toFixed(2));
         item.style.setProperty('--wheel-tilt-y', frame.rotationYDeg.toFixed(2));
         item.style.setProperty('--wheel-z', String(frame.zIndex));
+        item.style.pointerEvents = frame.interactive ? 'auto' : 'none';
+        item.tabIndex = frame.interactive ? 0 : -1;
+        item.setAttribute('aria-hidden', frame.interactive ? 'false' : 'true');
       });
     };
 
@@ -196,7 +226,15 @@
       const elapsed = lastTime ? Math.min(time - lastTime, 50) : 0;
       lastTime = time;
       if (shouldAnimate(pauses, reducedMotionQuery.matches, items.length)) {
-        render(progress + elapsed * 0.000018);
+        cycleElapsed += elapsed;
+        const step = calculateAutoplayStep(cycleElapsed, 2500, 900);
+        render(activeIndex + step.offset);
+        if (step.complete) {
+          activeIndex = (activeIndex + 1) % items.length;
+          cycleElapsed = 0;
+          render(activeIndex);
+          updateFilmstrip(activeIndex, true);
+        }
       }
       animationFrame = requestAnimationFrame(tick);
     };
@@ -236,7 +274,30 @@
       });
       stage.appendChild(fragment);
       items = Array.from(stage.querySelectorAll('.image-wheel__item'));
+
+      if (thumbnailsRoot) {
+        thumbnailsRoot.innerHTML = '';
+        const thumbnailFragment = document.createDocumentFragment();
+        images.forEach((image, index) => {
+          const thumbnail = document.createElement('span');
+          thumbnail.className = 'image-wheel__thumbnail';
+          thumbnail.setAttribute('role', 'listitem');
+          thumbnail.setAttribute('aria-label', `${index + 1}번째 사진`);
+
+          const thumbnailImage = document.createElement('img');
+          thumbnailImage.src = image.thumb;
+          thumbnailImage.alt = '';
+          thumbnailImage.loading = 'lazy';
+          thumbnailImage.decoding = 'async';
+          thumbnail.appendChild(thumbnailImage);
+          thumbnailFragment.appendChild(thumbnail);
+        });
+        thumbnailsRoot.appendChild(thumbnailFragment);
+        thumbnails = Array.from(thumbnailsRoot.querySelectorAll('.image-wheel__thumbnail'));
+      }
+
       render();
+      updateFilmstrip(activeIndex);
     };
 
     const closestWheelItem = (target) => target instanceof Element
@@ -280,7 +341,8 @@
       if (dragging.moved) {
         if (!stage.hasPointerCapture(event.pointerId)) stage.setPointerCapture(event.pointerId);
         suppressClick = true;
-        render(dragging.startProgress - delta / Math.max(stage.clientWidth, 320) * 0.55);
+        const slotWidth = Math.max(stage.clientWidth, 320) * (currentSlotX / 100);
+        render(dragging.startProgress - delta / slotWidth);
       }
     });
     const endDrag = (event) => {
@@ -291,6 +353,13 @@
       if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
       dragging = null;
       setPause('drag', false);
+      if (moved && items.length) {
+        activeIndex = ((Math.round(progress) % items.length) + items.length) % items.length;
+        progress = activeIndex;
+        cycleElapsed = 0;
+        render(progress);
+        updateFilmstrip(activeIndex, true);
+      }
       if (releasedImageIndex >= 0 && images[releasedImageIndex]) {
         suppressClick = true;
         openImage(images[releasedImageIndex], trigger);
@@ -309,7 +378,10 @@
     document.addEventListener('visibilitychange', () => setPause('hidden', document.hidden));
     document.addEventListener('portfolio:lightbox-open', () => setPause('lightbox', true));
     document.addEventListener('portfolio:lightbox-close', () => setPause('lightbox', false));
-    window.addEventListener('resize', () => render());
+    window.addEventListener('resize', () => {
+      render();
+      updateFilmstrip(activeIndex, true);
+    });
 
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(([entry]) => setPause('offscreen', !entry.isIntersecting), {
@@ -350,12 +422,13 @@
   }
 
   return {
-    calculateSpacedRadiusX,
-    calculateWheelFrame,
+    calculateAutoplayStep,
+    calculateCarouselFrame,
+    calculateCarouselSlotX,
     mount,
     normalizeLocalFallback,
     normalizeManifest,
-    normalizeProgress,
+    resolveFilmstripPosition,
     resolvePointerRelease,
     shouldAnimate,
   };

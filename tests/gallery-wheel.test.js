@@ -2,20 +2,15 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const {
-  calculateSpacedRadiusX,
-  calculateWheelFrame,
+  calculateAutoplayStep,
+  calculateCarouselFrame,
+  calculateCarouselSlotX,
   normalizeLocalFallback,
   normalizeManifest,
-  normalizeProgress,
+  resolveFilmstripPosition,
   resolvePointerRelease,
   shouldAnimate,
 } = require('../gallery-wheel.js');
-
-test('normalizeProgress wraps finite values into [0, 1)', () => {
-  assert.equal(normalizeProgress(1.25), 0.25);
-  assert.equal(normalizeProgress(-0.25), 0.75);
-  assert.equal(normalizeProgress(Number.NaN), 0);
-});
 
 test('normalizeManifest keeps renderable images and sorts newest first', () => {
   const images = normalizeManifest({
@@ -59,68 +54,50 @@ test('normalizeLocalFallback builds thumbnail records when fetch is unavailable'
   ]);
 });
 
-test('calculateWheelFrame produces a bounded elliptical orbit and depth', () => {
-  const frame = calculateWheelFrame(0, 8, 0, { radiusX: 42, radiusY: 13, depth: 0.24 });
-  assert.equal(frame.xPercent, 42);
-  assert.ok(Math.abs(frame.yPercent) < 0.001);
-  assert.ok(frame.scale >= 0.76 && frame.scale <= 1.24);
-  assert.ok(frame.opacity >= 0.45 && frame.opacity <= 1);
-});
+test('calculateCarouselFrame keeps one full card centered while the next waits at the side', () => {
+  const centered = calculateCarouselFrame?.(0, 8, 0);
+  const next = calculateCarouselFrame?.(1, 8, 0);
+  const far = calculateCarouselFrame?.(2, 8, 0);
 
-test('calculateWheelFrame turns continuously from the front to a 90 degree back card', () => {
-  const right = calculateWheelFrame(0, 4, 0);
-  const front = calculateWheelFrame(0, 4, 0.25);
-  const left = calculateWheelFrame(2, 4, 0);
-  const back = calculateWheelFrame(0, 4, 0.75);
-
-  assert.equal(right.rotationDeg, -3.5);
-  assert.equal(right.rotationYDeg, -45);
-  assert.ok(Math.abs(front.rotationDeg) < 0.001);
-  assert.ok(Math.abs(front.rotationYDeg) < 0.001);
-  assert.equal(left.rotationDeg, 3.5);
-  assert.equal(left.rotationYDeg, 45);
-  assert.equal(Math.abs(back.rotationYDeg), 90);
-});
-
-test('calculateWheelFrame crossfades adjacent cards at the front handoff', () => {
-  const count = 15;
-  const handoffProgress = 0.25 + 1 / (count * 2);
-  const outgoing = calculateWheelFrame(0, count, handoffProgress);
-  const incoming = calculateWheelFrame(count - 1, count, handoffProgress);
-  const centered = calculateWheelFrame(0, count, 0.25);
-
-  assert.ok(centered.opacity > 0.99);
-  assert.ok(outgoing.opacity >= 0.55 && outgoing.opacity <= 0.62);
-  assert.ok(incoming.opacity >= 0.55 && incoming.opacity <= 0.62);
-  assert.ok(Math.abs(outgoing.opacity - incoming.opacity) < 0.001);
-});
-
-test('calculateWheelFrame smoothly enlarges only the centered card', () => {
-  const count = 15;
-  const centered = calculateWheelFrame(0, count, 0.25);
-  const approaching = calculateWheelFrame(0, count, 0.25 + 1 / (count * 4));
-  const handoff = calculateWheelFrame(0, count, 0.25 + 1 / (count * 2));
-
-  assert.ok(Math.abs(centered.scale - 1.3) < 0.001);
-  assert.ok(centered.scale > approaching.scale);
-  assert.ok(approaching.scale > handoff.scale);
-});
-
-test('calculateSpacedRadiusX preserves a visible gap as the gallery grows', () => {
-  const count = 22;
-  const stageWidth = 1168;
-  const cardWidth = 330;
-  const gap = 24;
-  const maxScale = 1.3;
-  const radiusX = calculateSpacedRadiusX?.(count, stageWidth, cardWidth, {
-    baseRadiusX: 44,
-    gap,
-    maxScale,
+  assert.deepEqual(centered, {
+    xPercent: 0,
+    yPercent: 0,
+    scale: 1.12,
+    opacity: 1,
+    rotationDeg: 0,
+    rotationYDeg: 0,
+    zIndex: 100,
+    interactive: true,
   });
-  const adjacentDistance = Math.sin((Math.PI * 2) / count) * (radiusX / 100) * stageWidth;
+  assert.equal(next.xPercent, 46);
+  assert.equal(next.rotationYDeg, -70);
+  assert.ok(next.scale < centered.scale);
+  assert.equal(far.opacity, 0);
+  assert.equal(far.interactive, false);
+});
 
-  assert.ok(radiusX > 44);
-  assert.ok(adjacentDistance >= cardWidth * maxScale + gap - 0.001);
+test('calculateAutoplayStep holds the centered photo before a smooth handoff', () => {
+  assert.deepEqual(calculateAutoplayStep?.(2499, 2500, 900), { offset: 0, complete: false });
+  assert.deepEqual(calculateAutoplayStep?.(2950, 2500, 900), { offset: 0.5, complete: false });
+  assert.deepEqual(calculateAutoplayStep?.(3400, 2500, 900), { offset: 1, complete: true });
+});
+
+test('calculateCarouselSlotX keeps enlarged handoff cards separated by the requested gap', () => {
+  const desktop = calculateCarouselSlotX?.(1168, 400, {
+    gap: 32,
+    projectionScale: 0.84,
+    transitionScale: 0.98,
+    minimumSlotX: 32,
+  });
+  const mobile = calculateCarouselSlotX?.(358, 211, {
+    gap: 12,
+    projectionScale: 0.84,
+    transitionScale: 0.98,
+    minimumSlotX: 32,
+  });
+
+  assert.equal(desktop, 32);
+  assert.ok(Math.abs(mobile - 51.87017) < 0.00001);
 });
 
 test('shouldAnimate requires multiple images and no pause reasons', () => {
@@ -136,4 +113,11 @@ test('resolvePointerRelease opens a stationary card but not a drag', () => {
   assert.equal(resolvePointerRelease?.({ moved: true, imageIndex: 4 }), -1);
   assert.equal(resolvePointerRelease?.({ moved: false, imageIndex: -1 }), -1);
   assert.equal(resolvePointerRelease?.(null), -1);
+});
+
+test('resolveFilmstripPosition wraps the active thumbnail and reports a human position', () => {
+  assert.deepEqual(resolveFilmstripPosition?.(0, 22), { index: 0, current: 1, total: 22 });
+  assert.deepEqual(resolveFilmstripPosition?.(22, 22), { index: 0, current: 1, total: 22 });
+  assert.deepEqual(resolveFilmstripPosition?.(-1, 22), { index: 21, current: 22, total: 22 });
+  assert.deepEqual(resolveFilmstripPosition?.(4, 0), { index: 0, current: 0, total: 0 });
 });
