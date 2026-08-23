@@ -69,6 +69,7 @@ await navigate(1440, 1000);
 const initial = await evaluate(`(() => ({
   count: document.querySelectorAll('.image-wheel__item').length,
   bloubSource: document.querySelector('[data-original-bloub]')?.getAttribute('src') || '',
+  bloubLook: document.querySelector('[data-original-bloub]')?.dataset.look || '',
   projectShowcases: document.querySelectorAll('.project-showcase').length,
   projectArchiveItems: document.querySelectorAll('.project-archive__item').length,
   projectOrder: [...document.querySelectorAll('.project-sequence [data-project-name]')].map((project) => project.dataset.projectName),
@@ -115,6 +116,32 @@ const initial = await evaluate(`(() => ({
   originalsLoaded: performance.getEntriesByType('resource').map((entry) => entry.name).filter((name) => /\\/Img\\/(?:[1-9]|1[0-5])\\.(?:jpg|jpeg|png)(?:$|\\?)/.test(name)),
   brokenImages: [...document.images].filter((image) => image.currentSrc && image.complete && image.naturalWidth === 0).map((image) => image.currentSrc),
 }))()`);
+
+const bloubPointerLooks = await evaluate(`(async () => {
+  const image = document.querySelector('[data-original-bloub]');
+  const rect = image.getBoundingClientRect();
+  const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  const offsets = [
+    ['north', 0, -rect.height],
+    ['north-east', rect.width, -rect.height],
+    ['east', rect.width, 0],
+    ['south-east', rect.width, rect.height],
+    ['south', 0, rect.height],
+    ['south-west', -rect.width, rect.height],
+    ['west', -rect.width, 0],
+    ['north-west', -rect.width, -rect.height],
+  ];
+  const results = [];
+  for (const [direction, dx, dy] of offsets) {
+    window.dispatchEvent(new PointerEvent('pointermove', { clientX: center.x + dx, clientY: center.y + dy }));
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await image.decode().catch(() => {});
+    results.push({ direction, src: image.getAttribute('src') || '', loaded: image.naturalWidth > 0 });
+  }
+  window.dispatchEvent(new Event('blur'));
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  return { results, resetSrc: image.getAttribute('src') || '', resetLook: image.dataset.look || '' };
+})()`);
 
 await screenshot('portfolio-hero-desktop-fixed.png');
 await evaluate(`(() => {
@@ -236,6 +263,12 @@ await screenshot('portfolio-lightbox-fixed.png');
 await evaluate("window.portfolioLightbox.close(); true");
 
 await navigate(390, 844);
+const mobileBloubLook = await evaluate(`(async () => {
+  const image = document.querySelector('[data-original-bloub]');
+  window.dispatchEvent(new PointerEvent('pointermove', { clientX: innerWidth, clientY: 0 }));
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  return { src: image.getAttribute('src') || '', look: image.dataset.look || '' };
+})()`);
 const mobile = await evaluate(`(() => ({
   bodyWidth: document.body.scrollWidth,
   viewportWidth: innerWidth,
@@ -270,6 +303,19 @@ await screenshot('portfolio-wheel-mobile-fixed.png');
 const checks = {
   fifteenImages: initial.count === 15,
   usesOriginalBloubSvg: initial.bloubSource === 'Img/bloub-squircle-excite-rouge-anime.svg',
+  bloubTracksEightDirections: JSON.stringify(bloubPointerLooks.results.map(({ direction, src }) => [direction, src])) === JSON.stringify([
+    ['north', 'Img/bloub-look/north.svg'],
+    ['north-east', 'Img/bloub-look/north-east.svg'],
+    ['east', 'Img/bloub-look/east.svg'],
+    ['south-east', 'Img/bloub-look/south-east.svg'],
+    ['south', 'Img/bloub-look/south.svg'],
+    ['south-west', 'Img/bloub-look/south-west.svg'],
+    ['west', 'Img/bloub-look/west.svg'],
+    ['north-west', 'Img/bloub-look/north-west.svg'],
+  ]),
+  bloubDirectionAssetsLoad: bloubPointerLooks.results.every(({ loaded }) => loaded),
+  bloubReturnsToCenter: bloubPointerLooks.resetSrc === 'Img/bloub-squircle-excite-rouge-anime.svg' && bloubPointerLooks.resetLook === 'center',
+  bloubStaysCenteredOnMobile: mobileBloubLook.src === 'Img/bloub-squircle-excite-rouge-anime.svg' && mobileBloubLook.look === 'center',
   fiveProjectShowcases: initial.projectShowcases === 5,
   oneProjectArchiveItem: initial.projectArchiveItems === 1,
   requestedProjectOrder: JSON.stringify(initial.projectOrder) === JSON.stringify(['drone', 'pillosuffer', 'brave-tylenol', 'code-buddy', 'signature-mk1', 'pill-good']),
@@ -304,6 +350,6 @@ const checks = {
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, bloubPointerLooks, mobileBloubLook, droneSlider, droneLightbox, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, lightbox, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;
