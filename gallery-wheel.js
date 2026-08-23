@@ -176,13 +176,13 @@
       if (event.button !== 0) return;
       dragging = { id: event.pointerId, startX: event.clientX, startProgress: progress, moved: false };
       setPause('drag', true);
-      stage.setPointerCapture(event.pointerId);
     });
     stage.addEventListener('pointermove', (event) => {
       if (!dragging || dragging.id !== event.pointerId) return;
       const delta = event.clientX - dragging.startX;
       if (Math.abs(delta) > 5) dragging.moved = true;
       if (dragging.moved) {
+        if (!stage.hasPointerCapture(event.pointerId)) stage.setPointerCapture(event.pointerId);
         suppressClick = true;
         render(dragging.startProgress - delta / Math.max(stage.clientWidth, 320) * 0.55);
       }

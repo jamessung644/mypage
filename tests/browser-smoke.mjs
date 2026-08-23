@@ -342,14 +342,39 @@ const wheelPerspective = await evaluate(`(() => {
 })()`);
 await screenshot('portfolio-wheel-desktop-fixed.png');
 
-await evaluate("document.querySelector('.image-wheel__item').click(); true");
-await waitFor("document.getElementById('lightbox').classList.contains('open')");
+const wheelClickTarget = await evaluate(`(() => {
+  const item = [...document.querySelectorAll('.image-wheel__item')]
+    .sort((left, right) => Math.abs(Number(getComputedStyle(left).getPropertyValue('--wheel-tilt-y'))) - Math.abs(Number(getComputedStyle(right).getPropertyValue('--wheel-tilt-y'))))[0];
+  const rect = item.getBoundingClientRect();
+  window.__wheelPointerCaptures = 0;
+  document.querySelector('[data-wheel-stage]').addEventListener('gotpointercapture', () => {
+    window.__wheelPointerCaptures += 1;
+  });
+  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+})()`);
+await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: wheelClickTarget.x, y: wheelClickTarget.y });
+await call('Input.dispatchMouseEvent', { type: 'mousePressed', x: wheelClickTarget.x, y: wheelClickTarget.y, button: 'left', clickCount: 1 });
+await call('Input.dispatchMouseEvent', { type: 'mouseReleased', x: wheelClickTarget.x, y: wheelClickTarget.y, button: 'left', clickCount: 1 });
+await new Promise((resolve) => setTimeout(resolve, 120));
 const lightbox = await evaluate(`(() => ({
   open: document.getElementById('lightbox').classList.contains('open'),
   src: document.getElementById('lightboxImg').getAttribute('src'),
+  pointerCaptures: window.__wheelPointerCaptures,
 }))()`);
 await screenshot('portfolio-lightbox-fixed.png');
 await evaluate("window.portfolioLightbox.close(); true");
+
+await evaluate("window.__wheelPointerCaptures = 0; true");
+await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x, y: stageCenter.y });
+await call('Input.dispatchMouseEvent', { type: 'mousePressed', x: stageCenter.x, y: stageCenter.y, button: 'left', clickCount: 1 });
+await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: stageCenter.x - 120, y: stageCenter.y, button: 'left', buttons: 1 });
+await call('Input.dispatchMouseEvent', { type: 'mouseReleased', x: stageCenter.x - 120, y: stageCenter.y, button: 'left', clickCount: 1 });
+await new Promise((resolve) => setTimeout(resolve, 120));
+const wheelDrag = await evaluate(`(() => ({
+  value: Number(document.querySelector('[data-wheel-slider]').value),
+  pointerCaptures: window.__wheelPointerCaptures,
+  lightboxOpen: document.getElementById('lightbox').classList.contains('open'),
+}))()`);
 
 await navigate(390, 844);
 const mobileBloubGaze = await evaluate(`(async () => {
@@ -435,12 +460,14 @@ const checks = {
   hoverPauses: beforePause === afterPause,
   manualSlider: manualValue === 500,
   wheelTurnsBackCardsUpTo90Degrees: wheelPerspective.perspective !== 'none' && wheelPerspective.minimumTilt < 10 && wheelPerspective.maximumTilt >= 85 && wheelPerspective.maximumTilt <= 90.5 && wheelPerspective.backCardTilt >= 85 && wheelPerspective.maximumRotation <= 3.6 && wheelPerspective.hasFrontFacingCard && wheelPerspective.cardAspectRatio < 0.8 && wheelPerspective.uses3dTransforms,
-  lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/1.jpg',
+  lightboxOpensOriginal: lightbox.open && lightbox.src === 'Img/12.jpeg',
+  wheelClickDoesNotCapturePointer: lightbox.pointerCaptures === 0,
+  wheelDragStillRotates: wheelDrag.value !== 500 && wheelDrag.pointerCaptures >= 1 && wheelDrag.lightboxOpen === false,
   noMobileOverflow: mobile.bodyWidth === mobile.viewportWidth,
   legacyGridHidden: mobile.legacyDisplay === 'none',
   mobileHeadlineFits: mobile.heroRight <= mobile.viewportWidth + 1,
 };
 
-console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, braveTylenolPhotoLoaded, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, wheelPerspective, lightbox, mobile } }, null, 2));
+console.log(JSON.stringify({ checks, details: { initial, bloubPointerMotion, bloubTrackingBlink, bloubUpwardMotion, mobileBloubGaze, droneSlider, droneLightbox, braveTylenolPhotoLoaded, codeBuddyIconLoaded, pillosufferSlider, pillosufferLightbox, pillosufferAccessibleControls, beforePause, afterPause, manualValue, wheelPerspective, lightbox, wheelDrag, mobile } }, null, 2));
 socket.close();
 if (Object.values(checks).some((value) => value !== true)) process.exitCode = 1;
