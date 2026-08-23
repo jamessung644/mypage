@@ -3,7 +3,7 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.GalleryWheel = api;
 })(typeof window !== 'undefined' ? window : globalThis, function buildGalleryWheelApi() {
-  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 68 };
+  const DEFAULT_GEOMETRY = { radiusX: 40, radiusY: 16, depth: 0.22, tiltY: 70 };
 
   function normalizeProgress(value) {
     if (!Number.isFinite(value)) return 0;
@@ -33,15 +33,13 @@
     const depth = geometry.depth ?? DEFAULT_GEOMETRY.depth;
     const tiltY = geometry.tiltY ?? DEFAULT_GEOMETRY.tiltY;
     const angle = ((index / Math.max(count, 1)) + normalizeProgress(progress)) * Math.PI * 2;
-    const angleDegrees = angle * 180 / Math.PI;
-    const rotationZDeg = ((angleDegrees - 90 + 180) % 360 + 360) % 360 - 180;
     const z = (Math.sin(angle) + 1) / 2;
     return {
       xPercent: Math.cos(angle) * radiusX,
       yPercent: Math.sin(angle) * radiusY,
       scale: 1 - depth + z * depth * 2,
       opacity: 0.44 + z * 0.56,
-      rotationZDeg,
+      rotationDeg: Math.cos(angle) * -3.5,
       rotationYDeg: Math.cos(angle) * -tiltY,
       zIndex: Math.round(z * 100),
     };
@@ -102,7 +100,7 @@
       const stageHeight = stage.clientHeight || 500;
       const compact = stageWidth < 640;
       const geometry = compact
-        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 62 }
+        ? { radiusX: 36, radiusY: 19, depth: 0.16, tiltY: 70 }
         : DEFAULT_GEOMETRY;
 
       items.forEach((item, index) => {
@@ -111,7 +109,7 @@
         item.style.setProperty('--wheel-y', `${(frame.yPercent / 100) * stageHeight}px`);
         item.style.setProperty('--wheel-scale', frame.scale.toFixed(3));
         item.style.setProperty('--wheel-opacity', frame.opacity.toFixed(3));
-        item.style.setProperty('--wheel-radial-z', frame.rotationZDeg.toFixed(2));
+        item.style.setProperty('--wheel-rotation', frame.rotationDeg.toFixed(2));
         item.style.setProperty('--wheel-tilt-y', frame.rotationYDeg.toFixed(2));
         item.style.setProperty('--wheel-z', String(frame.zIndex));
       });
