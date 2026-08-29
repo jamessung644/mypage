@@ -945,10 +945,12 @@ body.lang-en-active .lang-ko {
 }
 
 .info-list__value {
+  min-width: 0;
   font-size: .88rem;
   font-weight: 500;
   color: var(--color-text);
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 /* 소개 */
@@ -2594,5 +2596,18 @@ a.contact-item__value:hover {
   .back-to-top {
     bottom: 1rem;
     right: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .info-list__item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .35rem;
+  }
+
+  .info-list__value {
+    width: 100%;
+    text-align: left;
   }
 }
